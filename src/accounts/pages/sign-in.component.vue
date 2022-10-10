@@ -10,7 +10,7 @@ console.log('hello script setup')
         <div class="form">
         </div>
         <div class="sign-in_btn">
-            <button>Iniciar Sesión</button>
+            <q-btn color="secondary" label="Iniciar Sesión" />
         </div>
         <div class="additional-actions">
             <div>No tiene una cuenta?</div>
