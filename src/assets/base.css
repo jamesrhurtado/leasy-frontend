@@ -28,8 +28,17 @@
   src: url("./fonts/DM Sans Bold 700.ttf");
 }
 
-.font-dm-sans {
+@font-face {
+  font-family:"DM-Sans-Regular";
+  src: url("./fonts/DM Sans Regular 400.ttf");
+}
+
+.font-dm-sans-bold {
   font-family: "DM-Sans-Bold", sans-serif;
+}
+
+.font-dm-sans-regular {
+  font-family: "DM-Sans-Regular", sans-serif;
 }
 
 
@@ -50,7 +59,7 @@
   --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
   --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
 
-  --vt-c-text-light-1: var(--vt-c-indigo);
+  --vt-c-text-light-1: #1A191E;
   --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
   --vt-c-text-dark-1: var(--vt-c-white);
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
@@ -65,25 +74,12 @@
   --color-border: var(--vt-c-divider-light-2);
   --color-border-hover: var(--vt-c-divider-light-1);
 
-  --color-heading: var(--vt-c-text-light-1);
+  --color-heading: var(--vt-c-black-soft);
   --color-text: var(--vt-c-text-light-1);
 
   --section-gap: 160px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
-}
 
 *,
 *::before,
@@ -106,5 +102,9 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.heading-color{
+  color: var(--color-heading)
 }
 

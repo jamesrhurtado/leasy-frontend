@@ -1,12 +1,10 @@
-<script>
-export default {
-    
-}
+<script setup>
+console.log('hello script setup')
 </script>
 
 <template>
-    <div class="flex shadow-md">
-        <div class="heading font-dm-sans">
+    <div class="grid grid-cols-1 grid-rows-3 shadow-md">
+        <div class="heading heading-color font-dm-sans-bold">
             Iniciar Sesión
         </div>
         <div class="form">
