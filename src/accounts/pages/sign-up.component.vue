@@ -1,9 +1,12 @@
 <script setup>
 import { ref } from 'vue'
 
-const password = ref('')
-const isPwd =  ref(true)
+const name = ref('')
+const lastName = ref('')
 const email = ref('')
+const password =  ref('')
+const confirmPassword =  ref('')
+const isPwd = ref(true)
 
 </script>
 
