@@ -103,10 +103,10 @@ export default {
 
 <template>
     <div class="grid shadow-md w-96 m-auto my-6 font-dm-sans-regular">
-        <div class="heading heading-color font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
+        <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
             Registrarse
         </div>
-        <form @submit.prevent.stop="onSubmit" @reset.prevent.stop="onReset" class="p-3">
+        <form @submit.prevent.stop="onSubmit" class="p-3">
             <q-input
                 ref="nameRef" 
                 class="p-2" 

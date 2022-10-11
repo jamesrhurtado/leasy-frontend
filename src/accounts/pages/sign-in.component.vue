@@ -8,11 +8,11 @@ const email = ref('')
 </script>
 
 <template>
-    <div class="grid grid-cols-1 grid-rows-3 shadow-md w-96 h-auto m-auto my-6 font-dm-sans-regular">
-        <div class="heading heading-color font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
+    <div class="grid shadow-md w-96 h-auto m-auto my-6 font-dm-sans-regular">
+        <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
             Iniciar Sesión
         </div>
-        <div class="form p-3">
+        <form @submit.prevent.stop="onSubmit" class="p-3">
             <q-input class="p-2" outlined v-model="text" label="Correo electronico" />
             <q-input class="p-2" outlined v-model="password" :type="isPwd ? 'password' : 'text'" label="Contraseña">
                 <template v-slot:append>
@@ -23,7 +23,7 @@ const email = ref('')
                     />
                 </template>
             </q-input>
-        </div>
+        </form>
         <div class="sign-in_btn text-center">
             <q-btn color="secondary" label="Iniciar Sesión" />
         </div>
