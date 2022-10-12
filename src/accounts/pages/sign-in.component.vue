@@ -1,20 +1,76 @@
-<script setup>
+<script>
+import { useQuasar } from 'quasar'
 import { ref } from 'vue'
 
-const password = ref('')
-const isPwd =  ref(true)
-const email = ref('')
+export default {
+  setup () {
+    const $q = useQuasar()
+
+    const email = ref(null)
+    const emailRef = ref(null)
+
+    const password = ref(null)
+    const passwordRef = ref(null)
+    const isPwd = ref(true)
+
+    return {
+        email,
+        emailRef,
+        emailRules: [
+            val => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(val)) || 'Por favor, ingrese un correo valido'
+        ],
+
+        password,
+        passwordRef,
+        passwordRules: [
+            val => (val && val.length > 0) || 'Este campo es obligatorio'
+        ],
+
+        isPwd,
+
+      onSubmit () {
+        emailRef.value.validate()
+        passwordRef.value.validate()
+
+        if (emailRef.value.hasError || passwordRef.value.hasError) {
+            $q.notify({
+            color: 'negative',
+            message: 'No se pudo ingresar. Verifique sus datos.',
+            actions: [
+                { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+            ]  
+          })
+        }
+      },
+    }
+  }
+}
 
 </script>
 
 <template>
-    <div class="grid grid-cols-1 grid-rows-3 shadow-md w-96 h-auto m-auto my-6 font-dm-sans-regular">
-        <div class="heading heading-color font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
+    <div class="grid shadow-md w-96 h-auto m-auto my-6 font-dm-sans-regular">
+        <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
             Iniciar Sesión
         </div>
-        <div class="form p-3">
-            <q-input class="p-2" outlined v-model="text" label="Correo electronico" />
-            <q-input class="p-2" outlined v-model="password" :type="isPwd ? 'password' : 'text'" label="Contraseña">
+        <form @submit.prevent.stop="onSubmit" class="p-3">
+            <q-input 
+            ref = "emailRef"
+            class="p-2" 
+            outlined 
+            v-model="email" 
+            label="Correo electronico" 
+            :rules="emailRules"
+            />
+            <q-input 
+            ref = "passwordRef"
+            class="p-2" 
+            outlined 
+            v-model="password" 
+            :type="isPwd ? 'password' : 'text'" 
+            label="Contraseña"
+            :rules="passwordRules"
+            >
                 <template v-slot:append>
                     <q-icon
                         :name="isPwd ? 'visibility_off' : 'visibility'"
@@ -23,7 +79,7 @@ const email = ref('')
                     />
                 </template>
             </q-input>
-        </div>
+        </form>
         <div class="sign-in_btn text-center">
             <q-btn color="secondary" label="Iniciar Sesión" />
         </div>
