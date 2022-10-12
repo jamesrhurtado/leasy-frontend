@@ -1,9 +1,11 @@
 <script>
 import { useQuasar } from 'quasar'
+import { ref } from 'vue'
 
 export default {
   setup () {
     const $q = useQuasar()
+    const currency = ref("")
 
     function promptCurrency () {
       $q.dialog({
@@ -77,28 +79,40 @@ export default {
     }
 
     return {
-      promptCurrency,
-      promptNDaysPerYear,
-      promptValueAddedTax,
-      promptIncomeTax
+        currency,
+        promptCurrency,
+        promptNDaysPerYear,
+        promptValueAddedTax,
+        promptIncomeTax
     }
   }
 }
 </script>
 
 <template>
-    <div class="grid shadow-md w-96 m-auto my-6 font-dm-sans-regular">
+    <div class="grid shadow-md w-auto m-auto my-6 font-dm-sans-regular">
         <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
             Configuraciones
         </div>
-        <q-input class="p-4 m-2" outlined v-model="currency" hint="Moneda" :dense="dense" readonly />
-        <q-btn label="Editar" color="primary" @click="promptCurrency" />
-        <q-input class="p-4 m-2" outlined v-model="nDaysPeryear" hint="Número de dias por año" :dense="dense" readonly />
-        <q-btn label="Editar" color="primary" @click="promptNDaysPerYear" />
-        <q-input class="p-4 m-2 mb-6" outlined v-model="valueAddedTax" hint="Impuesto general a las ventas (IGV)" :dense="dense" readonly />
-        <q-btn label="Editar" color="primary" @click="promptValueAddedTax" />
-        <q-input class="p-4 m-2 mb-6" outlined v-model="incomeTax" hint="Impuesto general a la renta (IR)" :dense="dense" readonly />
-        <q-btn label="Editar" color="primary" @click="promptIncomeTax" />
+        <div class="grid grid-cols-2 justify-center">
+            <q-input class="p-4 m-2" outlined v-model="currency" hint="Moneda" :dense="dense" readonly />
+            <q-btn class="max-h-7 self-center max-w-[50%] justify-self-center" label="Editar" color="primary" @click="promptCurrency" />
+        </div>
+
+        <div class="grid grid-cols-2 justify-center">
+            <q-input class="p-4 m-2" outlined v-model="nDaysPeryear" hint="Número de dias por año" :dense="dense" readonly />
+            <q-btn class="max-h-7 self-center max-w-[50%] justify-self-center" label="Editar" color="primary" @click="promptNDaysPerYear" />
+        </div>
+
+        <div class="grid grid-cols-2 justify-center">
+            <q-input class="p-4 m-2 mb-6" outlined v-model="valueAddedTax" hint="Impuesto general a las ventas (IGV)" :dense="dense" readonly />
+            <q-btn class="max-h-7 self-center max-w-[50%] justify-self-center" label="Editar" color="primary" @click="promptValueAddedTax" />
+        </div>
+
+        <div class="grid grid-cols-2 justify-center">
+            <q-input class="p-4 m-2 mb-6" outlined v-model="incomeTax" hint="Impuesto general a la renta (IR)" :dense="dense" readonly />
+            <q-btn class="max-h-7 self-center max-w-[50%] justify-self-center" label="Editar" color="primary" @click="promptIncomeTax" />
+        </div>
 
     </div>
   
