@@ -1,14 +1,14 @@
-<script>
+<script setup>
 import { useQuasar } from 'quasar'
 import { ref } from 'vue'
 
 const columns = [
   {
-    name: 'name',
+    name: 'periodo',
     required: true,
     label: 'Número',
     align: 'center',
-    field: row => row.name,
+    field: 'periodo',
     format: val => `${val}`,
     sortable: true
   },
@@ -31,7 +31,7 @@ const columns = [
 
 const rows = [
   {
-    name: 'Frozen Yogurt',
+    periodo: 1,
     calories: 159,
     fat: 6.0,
     carbs: 24,
@@ -41,7 +41,7 @@ const rows = [
     iron: '1%'
   },
   {
-    name: 'Ice cream sandwich',
+    periodo: 2,
     calories: 237,
     fat: 9.0,
     carbs: 37,
@@ -51,7 +51,7 @@ const rows = [
     iron: '1%'
   },
   {
-    name: 'Eclair',
+    periodo: 3,
     calories: 262,
     fat: 16.0,
     carbs: 23,
@@ -61,7 +61,7 @@ const rows = [
     iron: '7%'
   },
   {
-    name: 'Cupcake',
+    periodo:4,
     calories: 305,
     fat: 3.7,
     carbs: 67,
@@ -71,7 +71,7 @@ const rows = [
     iron: '8%'
   },
   {
-    name: 'Gingerbread',
+    periodo: 5,
     calories: 356,
     fat: 16.0,
     carbs: 49,
@@ -81,7 +81,7 @@ const rows = [
     iron: '16%'
   },
   {
-    name: 'Jelly bean',
+    periodo: 6,
     calories: 375,
     fat: 0.0,
     carbs: 94,
@@ -91,7 +91,7 @@ const rows = [
     iron: '0%'
   },
   {
-    name: 'Lollipop',
+    periodo: 7,
     calories: 392,
     fat: 0.2,
     carbs: 98,
@@ -101,7 +101,7 @@ const rows = [
     iron: '2%'
   },
   {
-    name: 'Honeycomb',
+    periodo: 8,
     calories: 408,
     fat: 3.2,
     carbs: 87,
@@ -111,7 +111,7 @@ const rows = [
     iron: '45%'
   },
   {
-    name: 'Donut',
+    periodo: 9,
     calories: 452,
     fat: 25.0,
     carbs: 51,
@@ -121,7 +121,7 @@ const rows = [
     iron: '22%'
   },
   {
-    name: 'KitKat',
+    periodo: 10,
     calories: 518,
     fat: 26.0,
     carbs: 65,
@@ -132,68 +132,46 @@ const rows = [
   }
 ]
 
+const $q = useQuasar()
 
-export default {
-    setup () {
-        const $q = useQuasar()
+const name = ref(null)
+const nameRef = ref(null)
+const age = ref(null)
+const ageRef = ref(null)
+const accept = ref(false)
 
-        const name = ref(null)
-        const nameRef = ref(null)
+const options = ['Tasa Nominal', 'Tasa Efectiva']
 
-        const age = ref(null)
-        const ageRef = ref(null)
+function roundValue(num){
+  return num.toFixed(2)
+}
 
-        const accept = ref(false)
 
-        return {
-            columns, 
-            rows,
-            name,
-            nameRef,
-            nameRules: [
-                val => (val && val.length > 0) || 'Please type something'
-            ],
+function onSubmit () {
+  nameRef.value.validate()
+  ageRef.value.validate()
 
-            age,
-            ageRef,
-            ageRules: [
-                val => (val !== null && val !== '') || 'Please type your age',
-                val => (val > 0 && val < 100) || 'Please type a real age'
-            ],
+  if (nameRef.value.hasError || ageRef.value.hasError) {
+    // form has error
+  }else if (accept.value !== true) {
+    $q.notify({
+      color: 'negative',
+      message: 'You need to accept the license and terms first'
+    })
+  }else {
+    $q.notify({
+      icon: 'done',
+      color: 'positive',
+      message: 'Submitted'
+    })
+  }
+}
 
-            accept,
-
-            onSubmit () {
-                nameRef.value.validate()
-                ageRef.value.validate()
-
-                if (nameRef.value.hasError || ageRef.value.hasError) {
-                    // form has error
-                }
-                else if (accept.value !== true) {
-                    $q.notify({
-                        color: 'negative',
-                        message: 'You need to accept the license and terms first'
-                    })
-                }
-                else {
-                    $q.notify({
-                        icon: 'done',
-                        color: 'positive',
-                        message: 'Submitted'
-                    })
-                }
-            },
-
-            onReset () {
-                name.value = null
-                age.value = null
-
-                nameRef.value.resetValidation()
-                ageRef.value.resetValidation()
-            }
-        }
-    }
+function onReset () {
+  name.value = null
+  age.value = null
+  nameRef.value.resetValidation()
+  ageRef.value.resetValidation()
 }
 
 </script>
@@ -210,7 +188,7 @@ export default {
                         <q-input class="p-2" outlined v-model="pVentaActivo" label="Precio de venta del activo" />
                         <q-input class="p-2" outlined v-model="nYears" label="Número de años" />
                         <q-input class="p-2" outlined v-model="paymentFrequency" label="Frecuencia de pago" />
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Tipo de tasa de interés" />
+                        <q-select class="p-2" outlined v-model="rateType" :options="options" label="Tipo de tasa de interés" />
                         <q-input class="p-2" outlined v-model="pVentaActivo" label="Capitalización" />
                         <q-input class="p-2" outlined v-model="pVentaActivo" label="Porcentaje de tasa" />
                         <q-input class="p-2" outlined v-model="pVentaActivo" label="Porcentaje de recompra" />
@@ -276,12 +254,6 @@ export default {
                         <q-input class="p-2" outlined v-model="nYears" label="VAN Flujo Bruto" />
                         <q-input class="p-2" outlined v-model="nYears" label="VAN Flujo Neto" />
                     </div>
-                    <div>
-                        <q-btn color="black" label="Calcular" />
-                    </div>
-                    <div>
-                        <q-btn color="red" label="Limpiar" />
-                    </div>
                 </div>
             </form>
     <div class="font-dm-sans-bold text-xl my-3">Cronograma</div>
@@ -292,7 +264,7 @@ export default {
       title="Schedule for Leasing"
       :rows="rows"
       :columns="columns"
-      row-key="name"
+      row-key="periodo"
       flat
       bordered
     />
