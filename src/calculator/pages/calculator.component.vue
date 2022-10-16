@@ -6,19 +6,27 @@ const columns = [
   {
     name: 'name',
     required: true,
-    label: 'Dessert (100g serving)',
-    align: 'left',
+    label: 'Número',
+    align: 'center',
     field: row => row.name,
     format: val => `${val}`,
     sortable: true
   },
-  { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-  { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-  { name: 'carbs', label: 'Carbs (g)', field: 'carbs' },
-  { name: 'protein', label: 'Protein (g)', field: 'protein' },
-  { name: 'sodium', label: 'Sodium (mg)', field: 'sodium' },
-  { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-  { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
+  { name: 'calories', align: 'center', label: 'P.G.', field: 'calories', sortable: true },
+  { name: 'fat', label: 'Saldo inicial', field: 'fat', sortable: true },
+  { name: 'carbs', label: 'Interés', field: 'carbs' },
+  { name: 'protein', label: 'Cuota', field: 'protein' },
+  { name: 'sodium', label: 'Amortización', field: 'sodium' },
+  { name: 'calcium', label: 'Seguro riesgo', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
+  { name: 'iron', label: 'Comisión', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
+  { name: 'protein', label: 'Recompra', field: 'protein' },
+  { name: 'protein', label: 'Saldo final', field: 'protein' },
+  { name: 'protein', label: 'Depreciacion', field: 'protein' },
+  { name: 'protein', label: 'Ahorro tributario', field: 'protein' },
+  { name: 'protein', label: 'IGV', field: 'protein' },
+  { name: 'protein', label: 'Flujo bruto', field: 'protein' },
+  { name: 'protein', label: 'Flujo con IGV', field: 'protein' },
+  { name: 'protein', label: 'Flujo neto', field: 'protein' },
 ]
 
 const rows = [
@@ -276,12 +284,12 @@ export default {
                     </div>
                 </div>
             </form>
-    <div class="font-dm-sans-bold text-xl">Cronograma</div>
+    <div class="font-dm-sans-bold text-xl my-3">Cronograma</div>
     <q-separator />
     <div class="q-pa-md">
     <q-table
       class="my-sticky-header-table"
-      title="Treats"
+      title="Schedule for Leasing"
       :rows="rows"
       :columns="columns"
       row-key="name"
