@@ -135,10 +135,7 @@ const rows = [
 const $q = useQuasar()
 const name = ref(null)
 const currentReport = ref({})
-const rateType = ref("")
-const nameRef = ref(null)
-const age = ref(null)
-const ageRef = ref(null)
+
 const accept = ref(false)
 
 const rateOptions = [
@@ -243,34 +240,120 @@ function onReset () {
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Resultados de arrendamiento</div>
-                        <div>{{ currentData.assetPrice }}</div>
-                        <q-input class="p-2" outlined v-model="pVentaActivo" :dense="dense" readonly/>
-                        <q-input class="p-2" outlined v-model="nYears" label="Valor venta del activo" />
-                        <q-input class="p-2" outlined v-model="paymentFrequency" label="Monto del Leasing" />
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="% de TEP" />
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Numero de cuotas por año" />
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Numero total de cuotas" />
+
+                        <q-field class="p-2" outlined label="Valor venta del activo" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+
+                        <q-field class="p-2" outlined label="Monto del Leasing" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+
+                        <q-field class="p-2" outlined label="Porcentaje de TEP" prefix="%" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+
+                        <q-field class="p-2" outlined label="Numero de cuotas por año" prefix="%" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+
+                        <q-field class="p-2" outlined label="Numero total de cuotas" prefix="%" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+
                     </div>
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Resultados totales por ...</div>
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Intereses" />
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Amortizacion del capital" />
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Seguro contra todo riesgo" />
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Comisiones periodicas" />
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Recompra" />
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Desembolso total" />
+
+                        <q-field class="p-2" outlined label="Intereses" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+
+                        <q-field class="p-2" outlined label="Amortizacion del capital" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+
+                        <q-field class="p-2" outlined label="Seguro contra todo riesgo" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+
+                        <q-field class="p-2" outlined label="Comisiones periodicas" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+
+                        <q-field class="p-2" outlined label="Recompra" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+
+                        <q-field class="p-2" outlined label="Desembolso total" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+  
                     </div>
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Resultados costes/gastos periódicos</div>
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Seguro riesgo" />
-                        <q-input class="p-2" outlined v-model="nYears" label="Porcentaje de seguro de riesgo" />
+
+                        <q-field class="p-2" outlined label="Seguro riesgo" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+
+                        <q-field class="p-2" outlined label="Porcentaje de seguro de riesgo" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+
                     </div>
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Indicadores de rentabilidad</div>
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="TCEA Flujo Bruto" />
-                        <q-input class="p-2" outlined v-model="nYears" label="TCEA Flujo Neto" />
-                        <q-input class="p-2" outlined v-model="nYears" label="VAN Flujo Bruto" />
-                        <q-input class="p-2" outlined v-model="nYears" label="VAN Flujo Neto" />
+
+                        <q-field class="p-2" outlined label="TCEA Flujo Bruto" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+
+                        <q-field class="p-2" outlined label="TCEA Flujo Neto" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+
+                        <q-field class="p-2" outlined label="VAN Flujo Bruto" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
+
+                        <q-field class="p-2" outlined label="VAN Flujo Neto" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                          </template>
+                        </q-field>
                     </div>
                 </div>
               </div>
