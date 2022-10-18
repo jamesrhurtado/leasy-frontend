@@ -1,4 +1,5 @@
 <script setup>
+
 import { useQuasar } from 'quasar'
 import { ref } from 'vue'
 
@@ -135,6 +136,9 @@ const rows = [
 const $q = useQuasar()
 const name = ref(null)
 const currentReport = ref({})
+const reportResults = ref({
+  assetValue: ''
+})
 
 const accept = ref(false)
 
@@ -179,6 +183,44 @@ function validateInputFields(){
 
 function onSubmit () {
   validateInputFields()
+  const storableData = loadData()
+
+
+  // reportResults.value.assetValue = parseInt(currentReport.value.assetPrice) * 2
+  // reportResults.value.ivaValue = (parseInt(currentReport.value.assetPrice)/(1+0.18)*0.18).toFixed(2)
+  // reportResults.value.assetValue = (parseInt(currentReport.value.assetPrice) - reportResults.value.ivaValue).toFixed(2)
+  // console.log(reportResults.value.ivaValue)
+}
+
+function loadData(){
+  const data = {
+    assetPrice: roundDecimal(parseFloat(currentReport.value.assetPrice)),
+    yearsNumber: parseInt(currentReport.value.yearsNumber),
+    paymentFrequency: parseInt(currentReport.value.paymentFrequency),
+    rateType: currentReport.value.rateType,
+    capitalization: currentReport.value.capitalization,
+    ratePercentage: roundPercentage(parseFloat(currentReport.value.ratePercentage)),
+    buyback: roundDecimal(parseFloat(currentReport.value.buyback)),
+    notaryFees: roundDecimal(parseFloat(currentReport.value.notaryFees)),
+    registryFees: roundDecimal(parseFloat(currentReport.value.registryFees)),
+    valuation: roundDecimal(parseFloat(currentReport.value.valuation)),
+    studyCommission: roundDecimal(parseFloat(currentReport.value.studyCommission)),
+    activationCommission: roundDecimal(parseFloat(currentReport.value.activationCommission)),
+    regularCommission: roundDecimal(parseFloat(currentReport.value.regularCommission)),
+    riskInsurancePercentage: roundPercentage(parseFloat(currentReport.value.riskInsurancePercentage)),
+    discountRateKS: roundPercentage(parseFloat(currentReport.value.discountRateKS)),
+    discountRateWACC: roundPercentage(parseFloat(currentReport.value.discountRateWACC))
+  }
+
+  return data
+}
+
+function roundDecimal(x){
+  return x.toFixed(2)
+}
+
+function roundPercentage(x){
+  return x.toFixed(7)
 }
 
 function onReset () {
@@ -243,13 +285,19 @@ function onReset () {
 
                         <q-field class="p-2" outlined label="Valor venta del activo" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.assetValue}}</div>
+                          </template>
+                        </q-field>
+
+                        <q-field class="p-2" outlined label="IGV" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.ivaValue}}</div>
                           </template>
                         </q-field>
 
                         <q-field class="p-2" outlined label="Monto del Leasing" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.leasingValue}}</div>
                           </template>
                         </q-field>
 
@@ -259,7 +307,7 @@ function onReset () {
                           </template>
                         </q-field>
 
-                        <q-field class="p-2" outlined label="Numero de cuotas por año" prefix="%" stack-label readonly>
+                        <q-field class="p-2" outlined label="Numero de cuotas por año" stack-label readonly>
                           <template v-slot:control>
                             <div class="self-center full-width no-outline" tabindex="0">{{currentReport.assetPrice}}</div>
                           </template>
