@@ -133,38 +133,55 @@ const rows = [
 ]
 
 const $q = useQuasar()
-
 const name = ref(null)
+const currentReport = ref({})
+const rateType = ref("")
 const nameRef = ref(null)
 const age = ref(null)
 const ageRef = ref(null)
 const accept = ref(false)
 
-const options = ['Tasa Nominal', 'Tasa Efectiva']
+const rateOptions = [
+  {label: 'Tasa Nominal', value: 'nominal'},
+  {label: 'Tasa Efectiva', value: 'efectiva'},
+]
+
+const daysValueOptions = [
+  {label: 'Diaria', value: 'nominal'},
+  {label: 'Quincenal', value: 'efectiva'},
+  {label: 'Mensual', value: 'efectiva'},
+  {label: 'Bimestral', value: 'efectiva'},
+  {label: 'Trimestral', value: 'efectiva'},
+  {label: 'Cuatrimestral', value: 'efectiva'},
+  {label: 'Semestral', value: 'efectiva'},
+  {label: 'Anual', value: 'efectiva'}
+]
 
 function roundValue(num){
   return num.toFixed(2)
 }
 
+function validateInputFields(){
+  // nameRef.value.validate()
+  // ageRef.value.validate()
+  // if (nameRef.value.hasError || ageRef.value.hasError) {
+  //   // form has error
+  // }else if (accept.value !== true) {
+  //   $q.notify({
+  //     color: 'negative',
+  //     message: 'You need to accept the license and terms first'
+  //   })
+  // }else {
+  //   $q.notify({
+  //     icon: 'done',
+  //     color: 'positive',
+  //     message: 'Submitted'
+  //   })
+  // }
+}
 
 function onSubmit () {
-  nameRef.value.validate()
-  ageRef.value.validate()
-
-  if (nameRef.value.hasError || ageRef.value.hasError) {
-    // form has error
-  }else if (accept.value !== true) {
-    $q.notify({
-      color: 'negative',
-      message: 'You need to accept the license and terms first'
-    })
-  }else {
-    $q.notify({
-      icon: 'done',
-      color: 'positive',
-      message: 'Submitted'
-    })
-  }
+  validateInputFields()
 }
 
 function onReset () {
@@ -185,34 +202,34 @@ function onReset () {
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos del prestamo</div>
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Precio de venta del activo" />
-                        <q-input class="p-2" outlined v-model="nYears" label="Número de años" />
-                        <q-input class="p-2" outlined v-model="paymentFrequency" label="Frecuencia de pago" />
-                        <q-select class="p-2" outlined v-model="rateType" :options="options" label="Tipo de tasa de interés" />
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Capitalización" />
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Porcentaje de tasa" />
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Porcentaje de recompra" />
+                        <q-input class="p-2" outlined v-model="currentReport.assetPrice" label="Precio de venta del activo" />
+                        <q-input class="p-2" outlined v-model="currentReport.yearsNumber" label="Número de años" />
+                        <q-input class="p-2" outlined v-model="currentReport.paymentFrequency" label="Frecuencia de pago" />
+                        <q-select class="p-2" outlined v-model="currentReport.rateType" :options="rateOptions" label="Tipo de tasa de interés" />
+                        <q-select class="p-2" outlined v-model="currentReport.capitalization" :options="daysValueOptions" label="Capitalización" />
+                        <q-input class="p-2" outlined v-model="currentReport.ratePercentage" label="Porcentaje de tasa" />
+                        <q-input class="p-2" outlined v-model="currentReport.buyback" label="Porcentaje de recompra" />
                     </div>
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos de costes/gastos iniciales</div>
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Costes notariales" />
-                        <q-input class="p-2" outlined v-model="nYears" label="Costes registrales" />
-                        <q-input class="p-2" outlined v-model="paymentFrequency" label="Tasación" />
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Comisión de estudio" />
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Comisión de activación" />
+                        <q-input class="p-2" outlined v-model="currentReport.notaryFees" label="Costes notariales" />
+                        <q-input class="p-2" outlined v-model="currentReport.registryFees" label="Costes registrales" />
+                        <q-input class="p-2" outlined v-model="currentReport.valuation" label="Tasación" />
+                        <q-input class="p-2" outlined v-model="currentReport.studyCommission" label="Comisión de estudio" />
+                        <q-input class="p-2" outlined v-model="currentReport.activationCommission" label="Comisión de activación" />
                     </div>
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos de costes/gastos periódicos</div>
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Comisión periódica" />
-                        <q-input class="p-2" outlined v-model="nYears" label="Porcentaje de seguro de riesgo" />
+                        <q-input class="p-2" outlined v-model="currentReport.regularCommission" label="Comisión periódica" />
+                        <q-input class="p-2" outlined v-model="currentReport.riskInsurancePercentage" label="Porcentaje de seguro de riesgo" />
                     </div>
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos del costo de oportunidad</div>
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="Tasa de descuento Ks" />
-                        <q-input class="p-2" outlined v-model="nYears" label="Tasa de descuento WACC" />
+                        <q-input class="p-2" outlined v-model="currentReport.discountRateKS" label="Tasa de descuento Ks" />
+                        <q-input class="p-2" outlined v-model="currentReport.discountRateWACC" label="Tasa de descuento WACC" />
                     </div>
                     <div>
-                        <q-btn color="black" label="Calcular" />
+                        <q-btn color="black" label="Calcular" type="submit" />
                     </div>
                     <div>
                         <q-btn color="red" label="Limpiar" />
@@ -222,11 +239,12 @@ function onReset () {
     </div>
     <div class="font-dm-sans-bold text-xl">Resultados</div>
         <q-separator />
-            <form @submit.prevent.stop="onSubmit" @reset.prevent.stop="onReset" class="q-gutter-md">
+            <div class="q-gutter-md">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Resultados de arrendamiento</div>
-                        <q-input class="p-2" outlined v-model="pVentaActivo" label="IGV" />
+                        <div>{{ currentData.assetPrice }}</div>
+                        <q-input class="p-2" outlined v-model="pVentaActivo" :dense="dense" readonly/>
                         <q-input class="p-2" outlined v-model="nYears" label="Valor venta del activo" />
                         <q-input class="p-2" outlined v-model="paymentFrequency" label="Monto del Leasing" />
                         <q-input class="p-2" outlined v-model="pVentaActivo" label="% de TEP" />
@@ -255,7 +273,7 @@ function onReset () {
                         <q-input class="p-2" outlined v-model="nYears" label="VAN Flujo Neto" />
                     </div>
                 </div>
-            </form>
+              </div>
     <div class="font-dm-sans-bold text-xl my-3">Cronograma</div>
     <q-separator />
     <div class="q-pa-md">
