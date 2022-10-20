@@ -52,6 +52,8 @@
 
   --vt-c-indigo: #2c3e50;
   --vt-c-blue-soft: #0057FF;
+  --vt-c-skyblue-soft: #5BB5A2;
+  --vt-c-skyblue-mute: #E8F2EE;
 
   --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
   --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
@@ -68,7 +70,7 @@
 :root {
   --color-background: var(--vt-c-white);
   --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
+  --color-background-mute: var(--vt-c-skyblue-mute);
 
   --color-border: var(--vt-c-divider-light-2);
   --color-border-hover: var(--vt-c-divider-light-1);
@@ -76,6 +78,8 @@
   --color-heading: var(--vt-c-black-soft);
   --color-text: var(--vt-c-text-light-1);
   --color-text-a: var(--vt-c-blue-soft);
+  --color-text-subheading-form: var(--vt-c-skyblue-soft);
+
 
   --section-gap: 160px;
 }
@@ -105,6 +109,11 @@ body {
 
 .heading-color{
   color: var(--color-heading)
+}
+
+.sub-heading-form{
+  color: var(--color-text-subheading-form);
+  background-color: var(--color-background-mute);
 }
 
 

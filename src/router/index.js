@@ -28,6 +28,11 @@ const router = createRouter({
       path: '/settings',
       name: 'Settings',
       component: () => import('../accounts/pages/user-settings.component.vue')
+    },
+    {
+      path: '/calculator',
+      name: 'Calculator',
+      component: () => import('../calculator/pages/calculator.component.vue')
     }
   ]
 })

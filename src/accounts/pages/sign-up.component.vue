@@ -1,73 +1,46 @@
-<script>
+<script setup>
 import { useQuasar } from 'quasar'
 import { ref } from 'vue'
 
-export default {
-  setup () {
-    const $q = useQuasar()
-    const name = ref(null)
-    const nameRef = ref(null)
+const $q = useQuasar()
 
-    const lastName = ref(null)
-    const lastNameRef = ref(null)
+const user = {
+    name: "",
+    lastName: "",
+    email: "",
+    password: ""
+}
 
-    const email = ref(null)
-    const emailRef = ref(null)
+const name = ref(null)
+const nameRef = ref(null)
+const lastName = ref(null)
+const lastNameRef = ref(null)
+const email = ref(null)
+const emailRef = ref(null)
+const password = ref(null)
+const passwordRef = ref(null)
+const isPwd = ref(true)
+const confirmPassword = ref(null)
+const confirmPasswordRef = ref(null)
+const isPwdConfirm = ref(true)
+//Validation rules
+const nameRules = [val => (val && val.length > 0) || 'Por favor, ingrese un nombre']
+const lastNameRules = [val => (val && val.length > 0) || 'Por favor, ingrese un nombre']
+const emailRules = [val => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(val)) || 'Por favor, ingrese un correo valido']
+const passwordRules = [val => (val && val.length > 0) || 'Este campo es obligatorio']
+const confirmPasswordRules = [val => (val && val.length > 0) || 'Este campo es obligatorio']
 
-    const password = ref(null)
-    const passwordRef = ref(null)
-    const isPwd = ref(true)
+const accept = ref(false)
 
-    const confirmPassword = ref(null)
-    const confirmPasswordRef = ref(null)
-    const isPwdConfirm = ref(true)
+function onSubmit () {
+    nameRef.value.validate()
+    lastNameRef.value.validate()
+    emailRef.value.validate()
+    passwordRef.value.validate()
+    confirmPasswordRef.value.validate()
 
-
-    const accept = ref(false)
-
-    return {
-        name,
-        nameRef,
-        nameRules: [
-            val => (val && val.length > 0) || 'Por favor, ingrese un nombre'
-        ],
-
-        lastName,
-        lastNameRef,
-        lastNameRules: [
-            val => (val && val.length > 0) || 'Por favor, ingrese un nombre'
-        ],
-
-        email,
-        emailRef,
-        emailRules: [
-            val => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(val)) || 'Por favor, ingrese un correo valido'
-        ],
-
-        password,
-        passwordRef,
-        passwordRules: [
-            val => (val && val.length > 0) || 'Este campo es obligatorio'
-        ],
-
-        confirmPassword,
-        confirmPasswordRef,
-        confirmPasswordRules: [
-            val => (val && val.length > 0) || 'Este campo es obligatorio'
-        ],
-        isPwd,
-        isPwdConfirm,
-        accept,
-
-      onSubmit () {
-        nameRef.value.validate()
-        lastNameRef.value.validate()
-        emailRef.value.validate()
-        passwordRef.value.validate()
-        confirmPasswordRef.value.validate()
-
-        if (nameRef.value.hasError || lastNameRef.value.hasError || emailRef.value.hasError) {
-            $q.notify({
+    if (nameRef.value.hasError || lastNameRef.value.hasError || emailRef.value.hasError) {
+        $q.notify({
             color: 'negative',
             message: 'No se pudo registrar. Verifique sus datos.',
             actions: [
@@ -75,30 +48,22 @@ export default {
             ]
             
           })
-        }
-        else if (accept.value !== true) {
-            $q.notify({
-                color: 'negative',
-                message: 'Necesita aceptar los terminos y condiciones',
-                actions: [
-                    { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
-                ]
+    }else if (accept.value !== true) {
+        $q.notify({
+            color: 'negative',
+            message: 'Necesita aceptar los terminos y condiciones',
+            actions: [{ label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }]
+        })
+    }else {
+        $q.notify({
+            icon: 'done',
+            color: 'positive',
+            message: 'Se ha registrado al usuario',
+            actions: [{ label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }]
             })
         }
-        else {
-            $q.notify({
-                icon: 'done',
-                color: 'positive',
-                message: 'Se ha registrado al usuario',
-                actions: [
-                    { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
-                ]
-            })
-        }
-      },
-    }
-  }
 }
+
 </script>
 
 <template>
