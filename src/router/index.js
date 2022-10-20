@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,15 +7,32 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: () => import('../accounts/pages/sign-in.component.vue')
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      path: '/sign-in',
+      name: 'Sign In',
+      component: () => import('../accounts/pages/sign-in.component.vue')
+    },
+    {
+      path: '/sign-up',
+      name: 'Sign Up',
+      component: () => import('../accounts/pages/sign-up.component.vue')
+    },
+    {
+      path: '/my-profile',
+      name: 'Profile',
+      component: () => import('../accounts/pages/user-profile.component.vue')
+    },
+    {
+      path: '/settings',
+      name: 'Settings',
+      component: () => import('../accounts/pages/user-settings.component.vue')
+    },
+    {
+      path: '/calculator',
+      name: 'Calculator',
+      component: () => import('../calculator/pages/calculator.component.vue')
     }
   ]
 })

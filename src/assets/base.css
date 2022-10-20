@@ -1,3 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem;
+  font-weight: normal;
+}
+
+
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+
+  #app {
+    padding: 0 2rem;
+  }
+}
+
+@font-face {
+  font-family:"DM-Sans-Bold";
+  src: url("./fonts/DM Sans Bold 700.ttf");
+}
+
+@font-face {
+  font-family:"DM-Sans-Regular";
+  src: url("./fonts/DM Sans Regular 400.ttf");
+}
+
+.font-dm-sans-bold {
+  font-family: "DM-Sans-Bold", sans-serif;
+}
+
+.font-dm-sans-regular {
+  font-family: "DM-Sans-Regular", sans-serif;
+}
+
+
 /* color palette from <https://github.com/vuejs/theme> */
 :root {
   --vt-c-white: #ffffff;
@@ -9,13 +51,16 @@
   --vt-c-black-mute: #282828;
 
   --vt-c-indigo: #2c3e50;
+  --vt-c-blue-soft: #0057FF;
+  --vt-c-skyblue-soft: #5BB5A2;
+  --vt-c-skyblue-mute: #E8F2EE;
 
   --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
   --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
   --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
   --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
 
-  --vt-c-text-light-1: var(--vt-c-indigo);
+  --vt-c-text-light-1: #1A191E;
   --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
   --vt-c-text-dark-1: var(--vt-c-white);
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
@@ -25,37 +70,26 @@
 :root {
   --color-background: var(--vt-c-white);
   --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
+  --color-background-mute: var(--vt-c-skyblue-mute);
 
   --color-border: var(--vt-c-divider-light-2);
   --color-border-hover: var(--vt-c-divider-light-1);
-
-  --color-heading: var(--vt-c-text-light-1);
+/*USED*/
+  --color-heading: var(--vt-c-black-soft);
   --color-text: var(--vt-c-text-light-1);
+  --color-text-a: var(--vt-c-blue-soft);
+  --color-text-subheading-form: var(--vt-c-skyblue-soft);
+
 
   --section-gap: 160px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-  }
-}
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
   margin: 0;
-  position: relative;
   font-weight: normal;
 }
 
@@ -72,3 +106,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.heading-color{
+  color: var(--color-heading)
+}
+
+.sub-heading-form{
+  color: var(--color-text-subheading-form);
+  background-color: var(--color-background-mute);
+}
+
+
+
