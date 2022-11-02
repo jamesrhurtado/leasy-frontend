@@ -1,0 +1,27 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "jhon@gmail.com",
+      "name": "Jhon",
+      "lastName": "Doe"
+    },
+    {
+      "name": "fasdfa",
+      "lastName": "fasdfa",
+      "email": "fasdfa@gmail.com",
+      "password": "reee",
+      "id": 2
+    },
+    {
+      "name": "oliver",
+      "lastName": "marks",
+      "email": "oliver@gmail.com",
+      "password": "oliver",
+      "id": 3
+    }
+  ],
+  "reports": [
+    {}
+  ]
+}
