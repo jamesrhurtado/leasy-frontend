@@ -3,11 +3,12 @@ import { useQuasar } from 'quasar'
 import { ref, reactive } from 'vue'
 import {UsersService} from '../services/users.service'
 import { useRouter, RouterLink } from "vue-router";
+import { useAuthStore } from '../../stores/auth.store.js';
+
 
 const $q = useQuasar()
 const userService = new UsersService()
 const router = useRouter();
-
 const user = reactive({
     email: "",
     password: ""
@@ -41,12 +42,15 @@ const validateData = () => {
     return valid
 }
 const handleSubmit = async () => {
+    let authUser;
+    const authStore = useAuthStore()
     const success = validateData()
     if(success){
-        await userService.create(newUser)
-        router.push("/sign-in");
+        authUser = await authStore.login(user)
+        if(authUser){
+            router.push("/calculator")
+        }
     }
-
 }
 
 </script>
@@ -82,10 +86,10 @@ const handleSubmit = async () => {
                     />
                 </template>
             </q-input>
-        </form>
-        <div class="sign-in_btn text-center">
-            <q-btn color="secondary" label="Iniciar Sesión" />
+            <div class="sign-in_btn text-center">
+            <q-btn color="secondary" label="Iniciar Sesión" type="submit" />
         </div>
+        </form>
         <div class="additional-actions text-center my-3">
             <div class="font-dm-sans-regular">No tiene una cuenta?</div>
             <RouterLink to="/sign-up" class="underline font-dm-sans-bold text-a">
