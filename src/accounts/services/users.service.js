@@ -1,6 +1,5 @@
 import http from '@/core/services/http-common'
 
-
 export class UsersService{
     getById(id) {
         return http.get(`users/${id}`);

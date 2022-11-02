@@ -8,7 +8,7 @@ const userService = new UsersService()
 const router = useRouter();
 const $q = useQuasar()
 
-const user = reactive({
+const newUser = reactive({
     name: "",
     lastName: "",
     email: "",
@@ -35,12 +35,12 @@ const accept = ref(false)
 const handleRegister = async () => {
     const success = validateData()
     if(success){
-        await userService.create(user)
+        await userService.create(newUser)
         router.push("/sign-in");
     }
 }
 
-function validateData(){
+const validateData = () => {
     let valid = false
     nameRef.value.validate()
     lastNameRef.value.validate()
@@ -86,7 +86,7 @@ function validateData(){
                 ref="nameRef" 
                 class="p-2" 
                 outlined 
-                v-model="user.name" 
+                v-model="newUser.name" 
                 label="Nombres" 
                 :rules="nameRules"
             />
@@ -94,7 +94,7 @@ function validateData(){
                 ref="lastNameRef" 
                 class="p-2" 
                 outlined 
-                v-model="user.lastName" 
+                v-model="newUser.lastName" 
                 label="Apellidos" 
                 :rules="lastNameRules"
             />
@@ -102,7 +102,7 @@ function validateData(){
                 ref="emailRef" 
                 class="p-2" 
                 outlined 
-                v-model="user.email" 
+                v-model="newUser.email" 
                 label="Correo electronico" 
                 :rules = "emailRules"
             />
@@ -110,7 +110,7 @@ function validateData(){
                 ref="passwordRef" 
                 class="p-2" 
                 outlined 
-                v-model="user.password" 
+                v-model="newUser.password" 
                 :type="isPwd ? 'password' : 'text'" 
                 label="Contraseña"
                 :rules="passwordRules"

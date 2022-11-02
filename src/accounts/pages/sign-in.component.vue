@@ -1,49 +1,52 @@
-<script>
+<script setup>
 import { useQuasar } from 'quasar'
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
+import {UsersService} from '../services/users.service'
+import { useRouter, RouterLink } from "vue-router";
 
-export default {
-  setup () {
-    const $q = useQuasar()
+const $q = useQuasar()
+const userService = new UsersService()
+const router = useRouter();
 
-    const email = ref(null)
-    const emailRef = ref(null)
+const user = reactive({
+    email: "",
+    password: ""
+})
 
-    const password = ref(null)
-    const passwordRef = ref(null)
-    const isPwd = ref(true)
+const email = ref(null)
+const emailRef = ref(null)
 
-    return {
-        email,
-        emailRef,
-        emailRules: [
-            val => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(val)) || 'Por favor, ingrese un correo valido'
-        ],
+const password = ref(null)
+const passwordRef = ref(null)
+const isPwd = ref(true)
+const emailRules = [val => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(val)) || 'Por favor, ingrese un correo valido']
 
-        password,
-        passwordRef,
-        passwordRules: [
-            val => (val && val.length > 0) || 'Este campo es obligatorio'
-        ],
+const passwordRules = [val => (val && val.length > 0) || 'Este campo es obligatorio']
 
-        isPwd,
-
-      onSubmit () {
-        emailRef.value.validate()
-        passwordRef.value.validate()
-
-        if (emailRef.value.hasError || passwordRef.value.hasError) {
-            $q.notify({
+const validateData = () => {
+    let valid = false
+    emailRef.value.validate()
+    passwordRef.value.validate()
+    if (emailRef.value.hasError || passwordRef.value.hasError) {
+        $q.notify({
             color: 'negative',
             message: 'No se pudo ingresar. Verifique sus datos.',
             actions: [
                 { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
             ]  
-          })
-        }
-      },
+        })
+    }else{
+        valid = true;
     }
-  }
+    return valid
+}
+const handleSubmit = async () => {
+    const success = validateData()
+    if(success){
+        await userService.create(newUser)
+        router.push("/sign-in");
+    }
+
 }
 
 </script>
@@ -53,12 +56,12 @@ export default {
         <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
             Iniciar Sesión
         </div>
-        <form @submit.prevent.stop="onSubmit" class="p-3">
+        <form @submit.prevent.stop="handleSubmit" class="p-3">
             <q-input 
             ref = "emailRef"
             class="p-2" 
             outlined 
-            v-model="email" 
+            v-model="user.email" 
             label="Correo electronico" 
             :rules="emailRules"
             />
@@ -66,7 +69,7 @@ export default {
             ref = "passwordRef"
             class="p-2" 
             outlined 
-            v-model="password" 
+            v-model="user.password" 
             :type="isPwd ? 'password' : 'text'" 
             label="Contraseña"
             :rules="passwordRules"
