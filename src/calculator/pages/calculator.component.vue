@@ -6,15 +6,7 @@ import {ReportsApiService} from '@/calculator/services/reports.service.js'
 
 //Template for table
 const columns = [
-  {
-    name: 'periodo',
-    required: true,
-    label: 'Número',
-    align: 'center',
-    field: 'periodo',
-    format: val => `${val}`,
-    sortable: true
-  },
+  { name: 'periodo', required: true, label: 'Número', align: 'center', field: 'periodo', format: val => `${val}`, sortable: true},
   { name: 'calories', align: 'center', label: 'P.G.', field: 'calories', sortable: true },
   { name: 'fat', label: 'Saldo inicial', field: 'fat', sortable: true },
   { name: 'carbs', label: 'Interés', field: 'carbs' },
@@ -192,7 +184,7 @@ const rateOptions = [
   {label: 'Tasa Efectiva', value: 'efectiva'},
 ]
 
-const daysValueOptions = [
+const periodicals = [
   {label: 'Diaria', value: 'diaria'},
   {label: 'Quincenal', value: 'quincenal'},
   {label: 'Mensual', value: 'mensual'},
@@ -207,19 +199,11 @@ function validateInputFields(){
 
 }
 
-const example = reactive({
-    name: "aaa",
-    lastName: "aaa",
-    email: "dasfa",
-    password: "fasdfsa"
-})
-
 const handleSubmit = async () => {
   validateInputFields()
   const storableData = loadData()
-  console.log(storableData)
-  await reportsApiService.create(storableData)
-  //calculateLeasingResults(currentReport)
+  //await reportsApiService.create(storableData)
+  calculateLeasingResults(storableData)
   //calculateTotalResults(storableData)
   //calculatePermanentSpendings(storableData)
   //calculateProfitabilityIndicators(storableData)
@@ -295,9 +279,9 @@ function onReset () {
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos del prestamo</div>
                         <q-input class="p-2" outlined v-model="currentReport.assetPrice" label="Precio de venta del activo" />
                         <q-input class="p-2" outlined v-model="currentReport.yearsNumber" label="Número de años" />
-                        <q-select class="p-2" outlined v-model="currentReport.paymentFrequency" :options="daysValueOptions" label="Frecuencia de pago" />
+                        <q-select class="p-2" outlined v-model="currentReport.paymentFrequency" :options="periodicals" label="Frecuencia de pago" />
                         <q-select class="p-2" outlined v-model="currentReport.rateType" :options="rateOptions" label="Tipo de tasa de interés" />
-                        <q-select class="p-2" outlined v-model="currentReport.capitalization" :options="daysValueOptions" label="Capitalización" />
+                        <q-select class="p-2" outlined v-model="currentReport.capitalization" :options="periodicals" label="Capitalización" />
                         <q-input class="p-2" outlined v-model="currentReport.ratePercentage" label="Porcentaje de tasa" />
                         <q-input class="p-2" outlined v-model="currentReport.buyback" label="Porcentaje de recompra" />
                     </div>
