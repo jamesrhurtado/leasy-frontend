@@ -29,6 +29,36 @@
     }
   ],
   "reports": [
-    {}
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    },
+    {
+      "name": "aaa",
+      "lastName": "aaa",
+      "email": "dasfa",
+      "password": "fasdfsa",
+      "id": 2
+    },
+    {
+      "assetPrice": 118000,
+      "yearsNumber": 36,
+      "paymentFrequency": 12,
+      "rateType": "nominal",
+      "capitalization": "bimestral",
+      "ratePercentage": 7,
+      "buyback": 9,
+      "notaryFees": 1233,
+      "registryFees": 2221,
+      "valuation": 2212,
+      "studyCommission": 22332,
+      "activationCommission": 35544,
+      "regularCommission": 4555,
+      "riskInsurancePercentage": 7,
+      "discountRateKS": 8,
+      "discountRateWACC": 9,
+      "id": 3
+    }
   ]
 }

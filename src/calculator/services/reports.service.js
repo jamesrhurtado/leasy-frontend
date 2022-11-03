@@ -1,4 +1,4 @@
-import http from '../../core/services/http-common';
+import http from '@/core/services/http-common';
 
 export class ReportsApiService{
     getAll(){
@@ -10,7 +10,7 @@ export class ReportsApiService{
     }
 
     create(data){
-        return http.post("/reports", data);
+        return http.post("reports", data);
     }
 
     update(id, data){

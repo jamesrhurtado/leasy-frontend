@@ -1,7 +1,8 @@
 <script setup>
 
 import { useQuasar } from 'quasar'
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
+import {ReportsApiService} from '@/calculator/services/reports.service.js'
 
 //Template for table
 const columns = [
@@ -136,8 +137,50 @@ const rows = [
 
 const $q = useQuasar()
 const name = ref(null)
-const currentReport = ref({})
-const reportResults = ref({})
+const reportsApiService = new ReportsApiService()
+
+const currentReport = reactive({
+    assetPrice: "",
+    yearsNumber: "",
+    paymentFrequency: "",
+    rateType: "",
+    capitalization: "",
+    ratePercentage: "",
+    buyback: "",
+    notaryFees: "",
+    registryFees: "",
+    valuation: "",
+    studyCommission: "",
+    activationCommission: "",
+    regularCommission: "",
+    riskInsurancePercentage: "",
+    discountRateKS: "",
+    discountRateWACC: ""
+})
+
+const reportResults = reactive({
+  assetValue: "",
+  ivaValue: "",
+  leasingValue: "",
+  tepPercentage: "",
+  quotasNumberPerYear: "",
+  totalQuotasNumber: "",
+  interests: "",  
+  repayment: "",
+  riskInsuranceValue: "",
+  periodicCommissions: "",
+  buybackResult: "",
+  totalPayment: "",
+  totalRiskInsurance: "",
+  grossFlowTcea: "",
+  netFlowTcea: "",
+  grossFlowVan: "",
+  netFlowVan: "",
+  ivaValue: "",
+  assetValue: "",
+  leasingValue: "",
+})
+
 
 const IGV = 0.18
 const DAYS_PER_YEAR = 360
@@ -164,10 +207,19 @@ function validateInputFields(){
 
 }
 
-function onSubmit () {
+const example = reactive({
+    name: "aaa",
+    lastName: "aaa",
+    email: "dasfa",
+    password: "fasdfsa"
+})
+
+const handleSubmit = async () => {
   validateInputFields()
   const storableData = loadData()
-  calculateLeasingResults(storableData)
+  console.log(storableData)
+  await reportsApiService.create(storableData)
+  //calculateLeasingResults(currentReport)
   //calculateTotalResults(storableData)
   //calculatePermanentSpendings(storableData)
   //calculateProfitabilityIndicators(storableData)
@@ -176,22 +228,22 @@ function onSubmit () {
 
 function loadData(){
   const data = {
-    assetPrice: roundDecimal((currentReport.value.assetPrice)),
-    yearsNumber: parseInt(currentReport.value.yearsNumber),
-    paymentFrequency: parseInt(currentReport.value.paymentFrequency),
-    rateType: currentReport.value.rateType,
-    capitalization: currentReport.value.capitalization,
-    ratePercentage: roundPercentage(parseFloat(currentReport.value.ratePercentage)),
-    buyback: roundDecimal((currentReport.value.buyback)),
-    notaryFees: roundDecimal((currentReport.value.notaryFees)),
-    registryFees: roundDecimal((currentReport.value.registryFees)),
-    valuation: roundDecimal((currentReport.value.valuation)),
-    studyCommission: roundDecimal((currentReport.value.studyCommission)),
-    activationCommission: roundDecimal((currentReport.value.activationCommission)),
-    regularCommission: roundDecimal((currentReport.value.regularCommission)),
-    riskInsurancePercentage: roundPercentage((currentReport.value.riskInsurancePercentage)),
-    discountRateKS: roundPercentage((currentReport.value.discountRateKS)),
-    discountRateWACC: roundPercentage((currentReport.value.discountRateWACC))
+    assetPrice: roundDecimal((currentReport.assetPrice)),
+    yearsNumber: parseInt(currentReport.yearsNumber),
+    paymentFrequency: parseInt(currentReport.paymentFrequency),
+    rateType: currentReport.rateType.value,
+    capitalization: currentReport.capitalization.value,
+    ratePercentage: roundPercentage(parseFloat(currentReport.ratePercentage)),
+    buyback: roundDecimal((currentReport.buyback)),
+    notaryFees: roundDecimal((currentReport.notaryFees)),
+    registryFees: roundDecimal((currentReport.registryFees)),
+    valuation: roundDecimal((currentReport.valuation)),
+    studyCommission: roundDecimal((currentReport.studyCommission)),
+    activationCommission: roundDecimal((currentReport.activationCommission)),
+    regularCommission: roundDecimal((currentReport.regularCommission)),
+    riskInsurancePercentage: roundPercentage((currentReport.riskInsurancePercentage)),
+    discountRateKS: roundPercentage((currentReport.discountRateKS)),
+    discountRateWACC: roundPercentage((currentReport.discountRateWACC))
   }
   return data
 }
@@ -217,9 +269,9 @@ function calculateRate(data){
 }
 
 function calculateLeasingResults(data){
-  reportResults.value.ivaValue = roundDecimal(data.assetPrice / (1 + IGV) * IGV)
-  reportResults.value.assetValue = roundDecimal(data.assetPrice - reportResults.value.ivaValue)
-  reportResults.value.leasingValue = roundDecimal(reportResults.value.assetValue + data.notaryFees + data.registryFees + data.valuation + data.studyCommission + data.activationCommission)
+  reportResults.ivaValue = roundDecimal(data.assetPrice / (1 + IGV) * IGV)
+  reportResults.assetValue = roundDecimal(data.assetPrice - reportResults.ivaValue)
+  reportResults.leasingValue = roundDecimal(reportResults.assetValue + data.notaryFees + data.registryFees + data.valuation + data.studyCommission + data.activationCommission)
   //calculateRate()
 }
 
@@ -237,13 +289,13 @@ function onReset () {
         <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-4xl md:text-5xl">Leasing</div>
         <div class="font-dm-sans-bold text-xl">Ingrese los datos</div>
         <q-separator />
-            <form @submit.prevent.stop="onSubmit" @reset.prevent.stop="onReset" class="q-gutter-md">
+            <form @submit.prevent.stop="handleSubmit" @reset.prevent.stop="onReset" class="q-gutter-md">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos del prestamo</div>
                         <q-input class="p-2" outlined v-model="currentReport.assetPrice" label="Precio de venta del activo" />
                         <q-input class="p-2" outlined v-model="currentReport.yearsNumber" label="Número de años" />
-                        <q-input class="p-2" outlined v-model="currentReport.paymentFrequency" label="Frecuencia de pago" />
+                        <q-select class="p-2" outlined v-model="currentReport.paymentFrequency" :options="daysValueOptions" label="Frecuencia de pago" />
                         <q-select class="p-2" outlined v-model="currentReport.rateType" :options="rateOptions" label="Tipo de tasa de interés" />
                         <q-select class="p-2" outlined v-model="currentReport.capitalization" :options="daysValueOptions" label="Capitalización" />
                         <q-input class="p-2" outlined v-model="currentReport.ratePercentage" label="Porcentaje de tasa" />
@@ -393,7 +445,7 @@ function onReset () {
 
                         <q-field class="p-2" outlined label="VAN Flujo Neto" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{currentReport.netFlowVan}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.netFlowVan}}</div>
                           </template>
                         </q-field>
                     </div>
