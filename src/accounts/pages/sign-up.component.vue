@@ -1,23 +1,23 @@
 <script setup>
 import { useQuasar } from 'quasar'
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
+import {UsersService} from '../services/users.service'
+import { useRouter, RouterLink } from "vue-router";
 
+const userService = new UsersService()
+const router = useRouter();
 const $q = useQuasar()
 
-const user = {
+const newUser = reactive({
     name: "",
     lastName: "",
     email: "",
     password: ""
-}
+})
 
-const name = ref(null)
 const nameRef = ref(null)
-const lastName = ref(null)
 const lastNameRef = ref(null)
-const email = ref(null)
 const emailRef = ref(null)
-const password = ref(null)
 const passwordRef = ref(null)
 const isPwd = ref(true)
 const confirmPassword = ref(null)
@@ -32,7 +32,16 @@ const confirmPasswordRules = [val => (val && val.length > 0) || 'Este campo es o
 
 const accept = ref(false)
 
-function onSubmit () {
+const handleRegister = async () => {
+    const success = validateData()
+    if(success){
+        await userService.create(newUser)
+        router.push("/sign-in");
+    }
+}
+
+const validateData = () => {
+    let valid = false
     nameRef.value.validate()
     lastNameRef.value.validate()
     emailRef.value.validate()
@@ -46,8 +55,7 @@ function onSubmit () {
             actions: [
                 { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
             ]
-            
-          })
+        })
     }else if (accept.value !== true) {
         $q.notify({
             color: 'negative',
@@ -60,8 +68,10 @@ function onSubmit () {
             color: 'positive',
             message: 'Se ha registrado al usuario',
             actions: [{ label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }]
-            })
-        }
+        })
+        valid = true;
+    }
+    return valid
 }
 
 </script>
@@ -71,12 +81,12 @@ function onSubmit () {
         <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
             Registrarse
         </div>
-        <form @submit.prevent.stop="onSubmit" class="p-3">
+        <form @submit.prevent.stop="handleRegister" class="p-3">
             <q-input
                 ref="nameRef" 
                 class="p-2" 
                 outlined 
-                v-model="name" 
+                v-model="newUser.name" 
                 label="Nombres" 
                 :rules="nameRules"
             />
@@ -84,7 +94,7 @@ function onSubmit () {
                 ref="lastNameRef" 
                 class="p-2" 
                 outlined 
-                v-model="lastName" 
+                v-model="newUser.lastName" 
                 label="Apellidos" 
                 :rules="lastNameRules"
             />
@@ -92,7 +102,7 @@ function onSubmit () {
                 ref="emailRef" 
                 class="p-2" 
                 outlined 
-                v-model="email" 
+                v-model="newUser.email" 
                 label="Correo electronico" 
                 :rules = "emailRules"
             />
@@ -100,7 +110,7 @@ function onSubmit () {
                 ref="passwordRef" 
                 class="p-2" 
                 outlined 
-                v-model="password" 
+                v-model="newUser.password" 
                 :type="isPwd ? 'password' : 'text'" 
                 label="Contraseña"
                 :rules="passwordRules"
