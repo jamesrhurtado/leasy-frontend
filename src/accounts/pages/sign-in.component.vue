@@ -1,49 +1,56 @@
-<script>
+<script setup>
 import { useQuasar } from 'quasar'
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
+import {UsersService} from '../services/users.service'
+import { useRouter, RouterLink } from "vue-router";
+import { useAuthStore } from '../../stores/auth.store.js';
 
-export default {
-  setup () {
-    const $q = useQuasar()
 
-    const email = ref(null)
-    const emailRef = ref(null)
+const $q = useQuasar()
+const userService = new UsersService()
+const router = useRouter();
+const user = reactive({
+    email: "",
+    password: ""
+})
 
-    const password = ref(null)
-    const passwordRef = ref(null)
-    const isPwd = ref(true)
+const email = ref(null)
+const emailRef = ref(null)
 
-    return {
-        email,
-        emailRef,
-        emailRules: [
-            val => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(val)) || 'Por favor, ingrese un correo valido'
-        ],
+const password = ref(null)
+const passwordRef = ref(null)
+const isPwd = ref(true)
+const emailRules = [val => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(val)) || 'Por favor, ingrese un correo valido']
 
-        password,
-        passwordRef,
-        passwordRules: [
-            val => (val && val.length > 0) || 'Este campo es obligatorio'
-        ],
+const passwordRules = [val => (val && val.length > 0) || 'Este campo es obligatorio']
 
-        isPwd,
-
-      onSubmit () {
-        emailRef.value.validate()
-        passwordRef.value.validate()
-
-        if (emailRef.value.hasError || passwordRef.value.hasError) {
-            $q.notify({
+const validateData = () => {
+    let valid = false
+    emailRef.value.validate()
+    passwordRef.value.validate()
+    if (emailRef.value.hasError || passwordRef.value.hasError) {
+        $q.notify({
             color: 'negative',
             message: 'No se pudo ingresar. Verifique sus datos.',
             actions: [
                 { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
             ]  
-          })
-        }
-      },
+        })
+    }else{
+        valid = true;
     }
-  }
+    return valid
+}
+const handleSubmit = async () => {
+    let authUser;
+    const authStore = useAuthStore()
+    const success = validateData()
+    if(success){
+        authUser = await authStore.login(user)
+        if(authUser){
+            router.push("/calculator")
+        }
+    }
 }
 
 </script>
@@ -53,12 +60,12 @@ export default {
         <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
             Iniciar Sesión
         </div>
-        <form @submit.prevent.stop="onSubmit" class="p-3">
+        <form @submit.prevent.stop="handleSubmit" class="p-3">
             <q-input 
             ref = "emailRef"
             class="p-2" 
             outlined 
-            v-model="email" 
+            v-model="user.email" 
             label="Correo electronico" 
             :rules="emailRules"
             />
@@ -66,7 +73,7 @@ export default {
             ref = "passwordRef"
             class="p-2" 
             outlined 
-            v-model="password" 
+            v-model="user.password" 
             :type="isPwd ? 'password' : 'text'" 
             label="Contraseña"
             :rules="passwordRules"
@@ -79,10 +86,10 @@ export default {
                     />
                 </template>
             </q-input>
-        </form>
-        <div class="sign-in_btn text-center">
-            <q-btn color="secondary" label="Iniciar Sesión" />
+            <div class="sign-in_btn text-center">
+            <q-btn color="secondary" label="Iniciar Sesión" type="submit" />
         </div>
+        </form>
         <div class="additional-actions text-center my-3">
             <div class="font-dm-sans-regular">No tiene una cuenta?</div>
             <RouterLink to="/sign-up" class="underline font-dm-sans-bold text-a">
