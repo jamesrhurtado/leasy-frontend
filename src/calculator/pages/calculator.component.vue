@@ -5,6 +5,7 @@ import { ref, reactive } from 'vue'
 import {ReportsApiService} from '@/calculator/services/reports.service.js'
 
 //Template for table
+//Columns
 const columns = [
   { name: 'periodo', required: true, label: 'Número', align: 'center', field: 'periodo', format: val => `${val}`, sortable: true},
   { name: 'calories', align: 'center', label: 'P.G.', field: 'calories', sortable: true },
@@ -23,6 +24,9 @@ const columns = [
   { name: 'protein', label: 'Flujo con IGV', field: 'protein' },
   { name: 'protein', label: 'Flujo neto', field: 'protein' },
 ]
+
+//Template for table
+//Rows
 
 const rows = [
   {
@@ -131,13 +135,14 @@ const $q = useQuasar()
 const name = ref(null)
 const reportsApiService = new ReportsApiService()
 
+//stores data to save report
 const currentReport = reactive({
     assetPrice: "",
-    yearsNumber: "",
+    leasingYears: "",
     paymentFrequency: "",
     rateType: "",
     capitalization: "",
-    ratePercentage: "",
+    rateValue: "",
     buyback: "",
     notaryFees: "",
     registryFees: "",
@@ -145,32 +150,30 @@ const currentReport = reactive({
     studyCommission: "",
     activationCommission: "",
     regularCommission: "",
-    riskInsurancePercentage: "",
-    discountRateKS: "",
-    discountRateWACC: ""
+    riskInsurance: "",
+    ksRate: "",
+    waccRate: ""
 })
 
+//stores the results to be displayed
 const reportResults = reactive({
   assetValue: "",
   ivaValue: "",
   leasingValue: "",
-  tepPercentage: "",
-  quotasNumberPerYear: "",
-  totalQuotasNumber: "",
-  interests: "",  
-  repayment: "",
+  effectiveRate: "",
+  quotasPerYear : "",
+  totalQuotas : "",
+  totalInterest : "",  
+  totalRepayment : "",
   riskInsuranceValue: "",
   periodicCommissions: "",
-  buybackResult: "",
+  buybackValue : "",
   totalPayment: "",
   totalRiskInsurance: "",
-  grossFlowTcea: "",
-  netFlowTcea: "",
-  grossFlowVan: "",
-  netFlowVan: "",
-  ivaValue: "",
-  assetValue: "",
-  leasingValue: "",
+  grossFlowEar : "",
+  netFlowEar : "",
+  grossFlowNpv : "",
+  netFlowNpv : ""
 })
 
 
@@ -179,6 +182,7 @@ const DAYS_PER_YEAR = 360
 
 const accept = ref(false)
 
+//options for dropdown fields
 const rateOptions = [
   {label: 'Tasa Nominal', value: 'nominal'},
   {label: 'Tasa Efectiva', value: 'efectiva'},
@@ -195,6 +199,7 @@ const periodicals = [
   {label: 'Anual', value: 'anual'}
 ]
 
+//ADD function to validate fields
 function validateInputFields(){
 
 }
@@ -210,14 +215,15 @@ const handleSubmit = async () => {
   //generateSchedule(storableData)
 }
 
+//returns the data in a storable type (string-> number)
 function loadData(){
   const data = {
     assetPrice: roundDecimal((currentReport.assetPrice)),
-    yearsNumber: parseInt(currentReport.yearsNumber),
+    leasingYears: parseInt(currentReport.leasingYears),
     paymentFrequency: parseInt(currentReport.paymentFrequency),
     rateType: currentReport.rateType.value,
     capitalization: currentReport.capitalization.value,
-    ratePercentage: roundPercentage(parseFloat(currentReport.ratePercentage)),
+    rateValue: roundPercentage(parseFloat(currentReport.rateValue)),
     buyback: roundDecimal((currentReport.buyback)),
     notaryFees: roundDecimal((currentReport.notaryFees)),
     registryFees: roundDecimal((currentReport.registryFees)),
@@ -225,9 +231,9 @@ function loadData(){
     studyCommission: roundDecimal((currentReport.studyCommission)),
     activationCommission: roundDecimal((currentReport.activationCommission)),
     regularCommission: roundDecimal((currentReport.regularCommission)),
-    riskInsurancePercentage: roundPercentage((currentReport.riskInsurancePercentage)),
-    discountRateKS: roundPercentage((currentReport.discountRateKS)),
-    discountRateWACC: roundPercentage((currentReport.discountRateWACC))
+    riskInsurance: roundPercentage((currentReport.riskInsurance)),
+    ksRate: roundPercentage((currentReport.ksRate)),
+    waccRate: roundPercentage((currentReport.waccRate))
   }
   return data
 }
@@ -259,6 +265,7 @@ function calculateLeasingResults(data){
   //calculateRate()
 }
 
+//cleans the fields
 function onReset () {
   name.value = null
   age.value = null
@@ -278,11 +285,11 @@ function onReset () {
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos del prestamo</div>
                         <q-input class="p-2" outlined v-model="currentReport.assetPrice" label="Precio de venta del activo" />
-                        <q-input class="p-2" outlined v-model="currentReport.yearsNumber" label="Número de años" />
+                        <q-input class="p-2" outlined v-model="currentReport.leasingYears" label="Número de años" />
                         <q-select class="p-2" outlined v-model="currentReport.paymentFrequency" :options="periodicals" label="Frecuencia de pago" />
                         <q-select class="p-2" outlined v-model="currentReport.rateType" :options="rateOptions" label="Tipo de tasa de interés" />
                         <q-select class="p-2" outlined v-model="currentReport.capitalization" :options="periodicals" label="Capitalización" />
-                        <q-input class="p-2" outlined v-model="currentReport.ratePercentage" label="Porcentaje de tasa" />
+                        <q-input class="p-2" outlined v-model="currentReport.rateValue" label="Porcentaje de tasa" />
                         <q-input class="p-2" outlined v-model="currentReport.buyback" label="Porcentaje de recompra" />
                     </div>
                     <div>
@@ -296,12 +303,12 @@ function onReset () {
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos de costes/gastos periódicos</div>
                         <q-input class="p-2" outlined v-model="currentReport.regularCommission" label="Comisión periódica" />
-                        <q-input class="p-2" outlined v-model="currentReport.riskInsurancePercentage" label="Porcentaje de seguro de riesgo" />
+                        <q-input class="p-2" outlined v-model="currentReport.riskInsurance" label="Porcentaje de seguro de riesgo" />
                     </div>
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos del costo de oportunidad</div>
-                        <q-input class="p-2" outlined v-model="currentReport.discountRateKS" label="Tasa de descuento Ks" />
-                        <q-input class="p-2" outlined v-model="currentReport.discountRateWACC" label="Tasa de descuento WACC" />
+                        <q-input class="p-2" outlined v-model="currentReport.ksRate " label="Tasa de descuento Ks" />
+                        <q-input class="p-2" outlined v-model="currentReport.waccRate" label="Tasa de descuento WACC" />
                     </div>
                     <div>
                         <q-btn color="black" label="Calcular" type="submit" />
@@ -339,19 +346,19 @@ function onReset () {
 
                         <q-field class="p-2" outlined label="Porcentaje de TEP" prefix="%" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.tepPercentage}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.effectiveRate }}</div>
                           </template>
                         </q-field>
 
                         <q-field class="p-2" outlined label="Numero de cuotas por año" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.quotasNumberPerYear}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.quotasPerYear }}</div>
                           </template>
                         </q-field>
 
                         <q-field class="p-2" outlined label="Numero total de cuotas" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.totalQuotasNumber}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.totalQuotas }}</div>
                           </template>
                         </q-field>
 
@@ -361,37 +368,37 @@ function onReset () {
 
                         <q-field class="p-2" outlined label="Intereses" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.interests}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.totalInterest }}</div>
                           </template>
                         </q-field>
 
                         <q-field class="p-2" outlined label="Amortizacion del capital" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.repayment}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.totalRepayment }}</div>
                           </template>
                         </q-field>
 
                         <q-field class="p-2" outlined label="Seguro contra todo riesgo" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.riskInsuranceValue}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.riskInsuranceValue }}</div>
                           </template>
                         </q-field>
 
                         <q-field class="p-2" outlined label="Comisiones periodicas" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.periodicCommissions}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.periodicComissions }}</div>
                           </template>
                         </q-field>
 
                         <q-field class="p-2" outlined label="Recompra" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.buybackResult}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.buybackValue }}</div>
                           </template>
                         </q-field>
 
                         <q-field class="p-2" outlined label="Desembolso total" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.totalPayment}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.totalPayment }}</div>
                           </template>
                         </q-field>
   
@@ -401,7 +408,7 @@ function onReset () {
 
                         <q-field class="p-2" outlined label="Seguro riesgo" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.totalRiskInsurance}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.totalRiskInsurance }}</div>
                           </template>
                         </q-field>
 
@@ -411,25 +418,25 @@ function onReset () {
 
                         <q-field class="p-2" outlined label="TCEA Flujo Bruto" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.grossFlowTcea}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.grossFlowEar }}</div>
                           </template>
                         </q-field>
 
                         <q-field class="p-2" outlined label="TCEA Flujo Neto" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.netFlowTcea}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.netFlowEar }}</div>
                           </template>
                         </q-field>
 
                         <q-field class="p-2" outlined label="VAN Flujo Bruto" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.grossFlowVan}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.grossFlowNpv }}</div>
                           </template>
                         </q-field>
 
                         <q-field class="p-2" outlined label="VAN Flujo Neto" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.netFlowVan}}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.netFlowNpv }}</div>
                           </template>
                         </q-field>
                     </div>
