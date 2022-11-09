@@ -4,10 +4,11 @@ import { ref, reactive } from 'vue'
 import {UsersService} from '../services/users.service'
 import { useRouter, RouterLink } from "vue-router";
 import { useAuthStore } from '../../stores/auth.store.js';
+import { AuthService } from '../services/auth.service';
 
 
 const $q = useQuasar()
-const userService = new UsersService()
+const authService = new AuthService()
 const router = useRouter();
 const user = reactive({
     email: "",
@@ -42,14 +43,23 @@ const validateData = () => {
     return valid
 }
 const handleSubmit = async () => {
-    let authUser;
-    const authStore = useAuthStore()
-    const success = validateData()
-    if(success){
-        authUser = await authStore.login(user)
-        if(authUser){
-            router.push("/calculator")
-        }
+    const validData = validateData()
+    if(authService.login(user) && validData){
+        $q.notify({
+            icon: 'done',
+            color: 'positive',
+            message: 'Usuario autenticado.',
+            actions: [{ label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }]
+        })
+        router.push("/calculator")
+    }else{
+        $q.notify({
+            color: 'negative',
+            message: 'Los datos ingresados no coinciden. Verifique sus datos.',
+            actions: [
+                { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+            ]  
+        })
     }
 }
 

@@ -11,23 +11,25 @@ export const useAuthStore = defineStore({
     state: () => ({
         // initialize state from local storage to enable user to stay logged in
         user: JSON.parse(localStorage.getItem('user')),
+        token: null,
         returnUrl: null
     }),
     actions: {
-        async login(user) {
+        login(user) {
             try {
-                const authenticatedUser = await http.get(`${baseUrl}?email=${user.email}`); 
-                if(authenticatedUser.data[0].password === user.password){
-                    this.user = {...authenticatedUser.data[0], token: 'fake-jwt-token'}
+                if(user.token){
+                    this.user = {user}
+                    this.token = user.token
                     // store user details and jwt in local storage to keep user logged in between page refreshes
                     localStorage.setItem('user', JSON.stringify(user));
-                    return user;
+                    return true
                 }else{
                     console.log("Email or password is incorrect")
+                    return false
                 }  
             } catch (error) {
-                console.log(error)
-                alert("")               
+                console.log(error)  
+                return false        
             }
         },
         logout() {

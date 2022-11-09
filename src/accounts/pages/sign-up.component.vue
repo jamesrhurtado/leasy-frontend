@@ -1,10 +1,10 @@
 <script setup>
 import { useQuasar } from 'quasar'
 import { ref, reactive } from 'vue'
-import {UsersService} from '../services/users.service'
+import {AuthService} from '../services/auth.service'
 import { useRouter, RouterLink } from "vue-router";
 
-const userService = new UsersService()
+const userService = new AuthService()
 const router = useRouter();
 const $q = useQuasar()
 
@@ -35,7 +35,7 @@ const accept = ref(false)
 const handleRegister = async () => {
     const success = validateData()
     if(success){
-        await userService.create(newUser)
+        await userService.register(newUser)
         router.push("/sign-in");
     }
 }
