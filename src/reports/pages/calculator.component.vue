@@ -3,6 +3,14 @@
 import { useQuasar } from 'quasar'
 import { ref, reactive } from 'vue'
 import {ReportsService} from '@/reports/services/reports.service.js'
+import { useSettingsStore } from '../../stores/settings.store.js';
+import { useAuthStore } from '../../stores/auth.store.js';
+
+const SettingsStore = useSettingsStore()
+const settings  = SettingsStore.settings;
+
+const UserStore = useAuthStore()
+const user = UserStore.user
 
 //Template for table
 //Columns
@@ -176,8 +184,11 @@ const reportResults = reactive({
   netFlowNpv : ""
 })
 
-const IGV = 0.18
-const DAYS_PER_YEAR = 360
+const IGV = (settings.valueAddedTax)/100
+const DAYS_PER_YEAR = settings.daysPerYear
+
+const showResults = false;
+const showSchedule = false;
 
 const accept = ref(false)
 
@@ -215,6 +226,8 @@ const handleSubmit = async () => {
 }
 
 //returns the data in a storable type (string-> number)
+
+const nominalRate = false;
 function loadData(){
   const data = {
     assetPrice: roundDecimal((currentReport.assetPrice)),
@@ -287,7 +300,7 @@ function onReset () {
                         <q-input class="p-2" outlined v-model="currentReport.leasingYears" label="Número de años" />
                         <q-select class="p-2" outlined v-model="currentReport.paymentFrequency" :options="periodicals" label="Frecuencia de pago" />
                         <q-select class="p-2" outlined v-model="currentReport.rateType" :options="rateOptions" label="Tipo de tasa de interés" />
-                        <q-select class="p-2" outlined v-model="currentReport.capitalization" :options="periodicals" label="Capitalización" />
+                        <q-select v-show="currentReport.rateType.value !== 'efectiva'" class="p-2" outlined v-model="currentReport.capitalization" :options="periodicals" label="Capitalización" />
                         <q-input class="p-2" outlined v-model="currentReport.rateValue" label="Porcentaje de tasa" />
                         <q-input class="p-2" outlined v-model="currentReport.buyback" label="Porcentaje de recompra" />
                     </div>
@@ -318,9 +331,9 @@ function onReset () {
                 </div>
             </form>
     </div>
-    <div class="font-dm-sans-bold text-xl">Resultados</div>
+    <div v-show="showResults" class="font-dm-sans-bold text-xl">Resultados</div>
         <q-separator />
-            <div class="q-gutter-md">
+            <div v-show="showResults" class="q-gutter-md">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Resultados de arrendamiento</div>
@@ -441,19 +454,19 @@ function onReset () {
                     </div>
                 </div>
               </div>
-    <div class="font-dm-sans-bold text-xl my-3">Cronograma</div>
+    <div v-show="showSchedule" class="font-dm-sans-bold text-xl my-3">Cronograma</div>
     <q-separator />
-    <div class="q-pa-md">
-    <q-table
-      class="my-sticky-header-table"
-      title="Schedule for Leasing"
-      :rows="rows"
-      :columns="columns"
-      row-key="periodo"
-      flat
-      bordered
-    />
-  </div>
+      <div v-show="showSchedule" class="q-pa-md">
+      <q-table
+        class="my-sticky-header-table"
+        title="Schedule for Leasing"
+        :rows="rows"
+        :columns="columns"
+        row-key="periodo"
+        flat
+        bordered
+      />
+    </div>
 </template>
 
 <style lang="sass">
@@ -477,4 +490,8 @@ function onReset () {
   &.q-table--loading thead tr:last-child th
     /* height of all previous header rows */
     top: 48px
+.invisible
+  visibility: hidden
+body
+  display: block
 </style>

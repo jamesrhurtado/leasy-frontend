@@ -5,6 +5,10 @@ export class ReportsService{
         return http.get("/reports")
     }
 
+    getAllByUserId(userId){
+        return http.get(`users/${userId}/reports`)
+    }
+
     getById(id){
         return http.get(`/reports/${id}`)
     }
