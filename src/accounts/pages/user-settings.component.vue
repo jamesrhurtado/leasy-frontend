@@ -1,9 +1,38 @@
 <script setup>
 import { useQuasar } from 'quasar'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import {SettingsService} from '@/accounts/services/settings.service.js'
+import { useSettingsStore } from '../../stores/settings.store.js';
+import { useAuthStore } from '../../stores/auth.store.js';
 
+const SettingsStore = useSettingsStore()
+const settings  = computed(() => SettingsStore.settings);
+
+const UserStore = useAuthStore()
+const user = UserStore.user
 const $q = useQuasar()
 const currency = ref("")
+const settingsService = new SettingsService()
+
+
+// //fetching user settings from Backend
+// const fetchSavedSettings = async () => {
+
+//   const currentSettings = await settingsService.getByUserId(user.id)
+  
+//   if(!currentSettings){
+//     //create settings with default values
+//     await settingsService.create(settings)
+//   }else{
+//     //update store with settings data got from Backend
+//     SettingsStore.updateSettings({currentSettings, userId: user.id})
+//   }
+// }
+// fetchSavedSettings()
+
+const updateSavedSettings = async () => {
+  await settingsService.update(settings.value.id, settings)
+}
 
 function promptCurrency() {
   $q.dialog({
@@ -13,15 +42,17 @@ function promptCurrency() {
       type: 'radio',
       model: 'opt1',
       items: [
-        { label: 'Dólar americano', value: 'Dólar americano', color: 'secondary' },
-        { label: 'Euro', value: 'Euro', color: 'secondary' },
-        { label: 'Sol peruano', value: 'Sol peruano', color: 'secondary' }
+        { label: 'Dólar americano (USD)', value: 'USD', color: 'secondary' },
+        { label: 'Euro (EUR)', value: 'EUR', color: 'secondary' },
+        { label: 'Sol peruano (PEN)', value: 'PEN', color: 'secondary' }
       ]
     },
     cancel: true,
     persistent: true
   }).onOk(data => {
-    // console.log('>>>> OK, received', data)
+    console.log('>>>> OK, received', data)
+    SettingsStore.updateSettings({...settings.value, currency: data})
+    // updateSavedSettings();
   })
 }
 
@@ -40,7 +71,9 @@ function promptNDaysPerYear() {
     cancel: true,
     persistent: true
   }).onOk(data => {
-    // console.log('>>>> OK, received', data)
+    console.log('>>>> OK, received', data)
+    SettingsStore.updateSettings({...settings.value, daysPerYear: data})
+    // updateSavedSettings();
   })
 }
 
@@ -50,13 +83,15 @@ function promptValueAddedTax() {
     message: 'Escriba el nuevo valor (en %)',
     prompt: {
       model: '',
-      isValid: val => val > 0, // << here is the magic
+      isValid: val => val > 0, // here is the magic
       type: 'number' // optional
     },
     cancel: true,
     persistent: true
   }).onOk(data => {
-    // console.log('>>>> OK, received', data)
+    console.log('>>>> OK, received', data)
+    SettingsStore.updateSettings({...settings.value, valueAddedTax: data})
+    // updateSavedSettings();
   })
 }
 
@@ -72,7 +107,9 @@ function promptIncomeTax() {
     cancel: true,
     persistent: true
   }).onOk(data => {
-    // console.log('>>>> OK, received', data)
+    console.log('>>>> OK, received', data)
+    SettingsStore.updateSettings({...settings.value, incomeTax: data})
+    // updateSavedSettings();
   })
 }
 
@@ -84,22 +121,22 @@ function promptIncomeTax() {
             Configuraciones
         </div>
         <div class="grid grid-cols-2 justify-center">
-            <q-input class="p-4 m-2" outlined v-model="currency" hint="Moneda" :dense="dense" readonly />
+            <q-input class="p-4 m-2" outlined v-model="settings.currency" hint="Moneda" readonly />
             <q-btn class="max-h-7 self-center max-w-[50%] justify-self-center" label="Editar" color="primary" @click="promptCurrency" />
         </div>
 
         <div class="grid grid-cols-2 justify-center">
-            <q-input class="p-4 m-2" outlined v-model="nDaysPeryear" hint="Número de dias por año" :dense="dense" readonly />
+            <q-input class="p-4 m-2" outlined v-model="settings.daysPerYear" hint="Número de dias por año" readonly />
             <q-btn class="max-h-7 self-center max-w-[50%] justify-self-center" label="Editar" color="primary" @click="promptNDaysPerYear" />
         </div>
 
         <div class="grid grid-cols-2 justify-center">
-            <q-input class="p-4 m-2 mb-6" outlined v-model="valueAddedTax" hint="Impuesto general a las ventas (IGV)" :dense="dense" readonly />
+            <q-input class="p-4 m-2 mb-6" outlined v-model="settings.valueAddedTax" hint="Impuesto general a las ventas (IGV)" readonly />
             <q-btn class="max-h-7 self-center max-w-[50%] justify-self-center" label="Editar" color="primary" @click="promptValueAddedTax" />
         </div>
 
         <div class="grid grid-cols-2 justify-center">
-            <q-input class="p-4 m-2 mb-6" outlined v-model="incomeTax" hint="Impuesto general a la renta (IR)" :dense="dense" readonly />
+            <q-input class="p-4 m-2 mb-6" outlined v-model="settings.incomeTax" hint="Impuesto general a la renta (IR)" readonly />
             <q-btn class="max-h-7 self-center max-w-[50%] justify-self-center" label="Editar" color="primary" @click="promptIncomeTax" />
         </div>
     </div>

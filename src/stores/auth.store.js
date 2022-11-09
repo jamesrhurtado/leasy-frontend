@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia';
 import http from '../core/services/http-common';
-
-//import { fetchWrapper } from '@/helpers';
 import { useRouter, RouterLink } from "vue-router";
 
 const baseUrl = "http://localhost:3000/users";

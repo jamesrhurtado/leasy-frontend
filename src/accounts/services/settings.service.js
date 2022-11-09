@@ -1,8 +1,10 @@
 import http from '@/core/services/http-common'
 export class SettingsService{
 
-    getByUserId(userId){
-        return http.get(`users/${userId}/settings`)
+    async getByUserId(userId){
+        const response = await http.get(`users/${userId}/settings`)
+        if (response.status !== 200) return false;
+        return response;
     }
 
     create(data){
