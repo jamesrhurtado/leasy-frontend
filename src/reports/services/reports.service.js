@@ -1,6 +1,6 @@
 import http from '@/core/services/http-common';
 
-export class ReportsApiService{
+export class ReportsService{
     getAll(){
         return http.get("/reports")
     }

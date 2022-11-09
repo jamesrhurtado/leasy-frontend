@@ -2,7 +2,7 @@
 
 import { useQuasar } from 'quasar'
 import { ref, reactive } from 'vue'
-import {ReportsApiService} from '@/calculator/services/reports.service.js'
+import {ReportsService} from '@/reports/services/reports.service.js'
 
 //Template for table
 //Columns
@@ -133,7 +133,7 @@ const rows = [
 
 const $q = useQuasar()
 const name = ref(null)
-const reportsApiService = new ReportsApiService()
+const reportsService = new ReportsService()
 
 //stores data to save report
 const currentReport = reactive({
@@ -175,7 +175,6 @@ const reportResults = reactive({
   grossFlowNpv : "",
   netFlowNpv : ""
 })
-
 
 const IGV = 0.18
 const DAYS_PER_YEAR = 360

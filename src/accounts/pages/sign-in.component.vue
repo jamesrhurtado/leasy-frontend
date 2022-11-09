@@ -1,9 +1,7 @@
 <script setup>
 import { useQuasar } from 'quasar'
 import { ref, reactive } from 'vue'
-import {UsersService} from '../services/users.service'
 import { useRouter, RouterLink } from "vue-router";
-import { useAuthStore } from '../../stores/auth.store.js';
 import { AuthService } from '../services/auth.service';
 
 
