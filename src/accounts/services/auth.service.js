@@ -3,8 +3,13 @@ import { useAuthStore } from '../../stores/auth.store.js';
 
 export class AuthService{
 
-    register(data){
-        return http.post("users/sign-up", data);
+    async register(data){
+        try {
+            await http.post("users/sign-up", data);
+            return true;
+        } catch (err) {
+            return false;
+        }
     }
 
     async login(user){
@@ -14,15 +19,10 @@ export class AuthService{
         return authStore.login(response)
     }
 
-
-
-    getById(id) {
-        return http.get(`users/${id}`);
-    }
     getReports(id) {
         return http.get(`users/${id}/reports`);
     }
-
+    //additional actions (currently not used)
     update(id, data) {
         return http.put(`users/${id}`, data);
     }

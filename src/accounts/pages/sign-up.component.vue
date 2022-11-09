@@ -4,7 +4,7 @@ import { ref, reactive } from 'vue'
 import {AuthService} from '../services/auth.service'
 import { useRouter, RouterLink } from "vue-router";
 
-const userService = new AuthService()
+const authService = new AuthService()
 const router = useRouter();
 const $q = useQuasar()
 
@@ -33,10 +33,18 @@ const confirmPasswordRules = [val => (val && val.length > 0) || 'Este campo es o
 const accept = ref(false)
 
 const handleRegister = async () => {
-    const success = validateData()
-    if(success){
+    const validData = validateData()
+    if(authService.register(newUser) && validData){
         await userService.register(newUser)
         router.push("/sign-in");
+    }else{
+        $q.notify({
+            color: 'negative',
+            message: 'No se pudo registrar. Verifique sus datos.',
+            actions: [
+                { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+            ]
+        })
     }
 }
 
