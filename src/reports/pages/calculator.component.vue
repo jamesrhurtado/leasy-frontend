@@ -185,7 +185,8 @@ const reportResults = reactive({
   netFlowNpv : null
 })
 
-const IGV = (settings.valueAddedTax)/100
+const VAT = (settings.valueAddedTax)/100
+const INCOME_TAX = (settings.incomeTax)/100
 const DAYS_PER_YEAR = settings.daysPerYear
 
 const showResults = true;
@@ -224,8 +225,8 @@ const handleSubmit = async () => {
   calculateLeasingResults(storableData)
   calculateTotalResults(storableData)
   calculateRecurringCosts(storableData)
-  //calculateProfitabilityIndicators(storableData)
-  //generateSchedule(storableData)
+  calculateProfitabilityIndicators(storableData)
+  generateSchedule(storableData)
 }
 
 //returns the data in a storable type (string-> number)
@@ -311,11 +312,9 @@ function calculatePeriodEffectiveRateWithEffectiveRate(rateValue, paymentFrequen
   return rate
 }
 
-
-
 function calculateLeasingResults(data){
   const paymentFrequencyDays = getDaysPerFrequency(data.paymentFrequency)
-  reportResults.ivaValue = roundDecimal(data.assetPrice / (1 + IGV) * IGV)
+  reportResults.ivaValue = roundDecimal(data.assetPrice / (1 + VAT) * VAT)
   reportResults.assetValue = roundDecimal(data.assetPrice - reportResults.ivaValue)
   reportResults.leasingValue = roundDecimal(reportResults.assetValue + data.notaryFees + data.registryFees + data.valuation + data.studyCommission + data.activationCommission)
   calculateRate(data)
@@ -339,6 +338,34 @@ function calculateRecurringCosts(data){
 function calculateRiskInsuranceValue(riskInsurance, assetPrice, quotasPerYear){
   let value = (riskInsurance/100 * assetPrice)/ quotasPerYear
   return value
+}
+
+function calculateProfitabilityIndicators(data){
+
+}
+
+
+function generateSchedule(data){
+  let initialValue = reportResults.leasingValue
+  let repayment = reportResults.leasingValue/reportResults.totalQuotas
+  
+  for(let i=0; i < reportResults.totalQuotas; i++){
+    let interest = initialValue * reportResults.periodEffectiveRate
+    let quota = interest + repayment
+    //contador para sumar cuotas consecutivas
+    let finalValue = initialValue - repayment
+    //contador para sumar seguro riesgo
+    //let taxSaving = (interest + riskInsuranceValue + comisiones + depreciacion)*INCOME_TAX
+    //counter for gross flow
+    //igv cuota
+    //flujo igv
+    //flujo neto
+
+    //counter for van gross flow
+
+    //counter for van net flow
+    rows.push({})
+  }
 }
 
 //cleans the fields
@@ -457,7 +484,7 @@ function onReset () {
 
                         <q-field class="p-2" outlined label="Seguro contra todo riesgo" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.riskInsuranceValue }}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.totalRiskInsurance }}</div>
                           </template>
                         </q-field>
 
@@ -485,7 +512,7 @@ function onReset () {
 
                         <q-field class="p-2" outlined label="Seguro riesgo" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.totalRiskInsurance }}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.riskInsuranceValue }}</div>
                           </template>
                         </q-field>
 
