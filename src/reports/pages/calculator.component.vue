@@ -149,6 +149,7 @@ const currentReport = reactive({
     leasingYears: "",
     paymentFrequency: "",
     rateType: "",
+    rateFrequency: "",
     capitalization: "",
     rateValue: "",
     buyback: "",
@@ -165,48 +166,48 @@ const currentReport = reactive({
 
 //stores the results to be displayed
 const reportResults = reactive({
-  assetValue: "",
-  ivaValue: "",
-  leasingValue: "",
-  effectiveRate: "",
-  quotasPerYear : "",
-  totalQuotas : "",
-  totalInterest : "",  
-  totalRepayment : "",
-  riskInsuranceValue: "",
-  periodicCommissions: "",
-  buybackValue : "",
-  totalPayment: "",
-  totalRiskInsurance: "",
-  grossFlowEar : "",
-  netFlowEar : "",
-  grossFlowNpv : "",
-  netFlowNpv : ""
+  assetValue: null,
+  ivaValue: null,
+  leasingValue: null,
+  periodEffectiveRate: null,
+  quotasPerYear : null,
+  totalQuotas : null,
+  totalInterest : null,  
+  totalRepayment : null,
+  riskInsuranceValue: null,
+  periodicCommissions: null,
+  buybackValue : null,
+  totalPayment: null,
+  totalRiskInsurance: null,
+  grossFlowEar : null,
+  netFlowEar : null,
+  grossFlowNpv : null,
+  netFlowNpv : null
 })
 
 const IGV = (settings.valueAddedTax)/100
 const DAYS_PER_YEAR = settings.daysPerYear
 
-const showResults = false;
-const showSchedule = false;
+const showResults = true;
+const showSchedule = true;
 
 const accept = ref(false)
 
 //options for dropdown fields
 const rateOptions = [
   {label: 'Tasa Nominal', value: 'nominal'},
-  {label: 'Tasa Efectiva', value: 'efectiva'},
+  {label: 'Tasa Efectiva', value: 'effective'},
 ]
 
 const periodicals = [
-  {label: 'Diaria', value: 'diaria'},
-  {label: 'Quincenal', value: 'quincenal'},
-  {label: 'Mensual', value: 'mensual'},
-  {label: 'Bimestral', value: 'bimestral'},
-  {label: 'Trimestral', value: 'trimestral'},
-  {label: 'Cuatrimestral', value: 'cuatrimestral'},
-  {label: 'Semestral', value: 'semestral'},
-  {label: 'Anual', value: 'anual'}
+  {label: 'Diaria', value: 'daily'},
+  {label: 'Quincenal', value: 'biweekly'},
+  {label: 'Mensual', value: 'monthly'},
+  {label: 'Bimestral', value: 'bimonthly'},
+  {label: 'Trimestral', value: 'quarterly'},
+  {label: 'Cuatrimestral', value: 'four-monthly'},
+  {label: 'Semestral', value: 'six-montly'},
+  {label: 'Anual', value: 'yearly'}
 ]
 
 //ADD function to validate fields
@@ -218,6 +219,8 @@ const handleSubmit = async () => {
   validateInputFields()
   const storableData = loadData()
   //await reportsApiService.create(storableData)
+  const showResults = true;
+  const showSchedule = true;
   calculateLeasingResults(storableData)
   //calculateTotalResults(storableData)
   //calculatePermanentSpendings(storableData)
@@ -227,13 +230,14 @@ const handleSubmit = async () => {
 
 //returns the data in a storable type (string-> number)
 
-const nominalRate = false;
+//HELPER FUNCTIONS
 function loadData(){
   const data = {
     assetPrice: roundDecimal((currentReport.assetPrice)),
     leasingYears: parseInt(currentReport.leasingYears),
-    paymentFrequency: parseInt(currentReport.paymentFrequency),
+    paymentFrequency: currentReport.paymentFrequency.value,
     rateType: currentReport.rateType.value,
+    rateFrequency: currentReport.rateFrequency.value,
     capitalization: currentReport.capitalization.value,
     rateValue: roundPercentage(parseFloat(currentReport.rateValue)),
     buyback: roundDecimal((currentReport.buyback)),
@@ -258,23 +262,69 @@ function roundPercentage(x){
   return +parseFloat(x).toFixed(7)
 }
 
-function calculateRate(data){
-  /*
-  if tasa nominal:
-    usar capitalizacion para hallar tasa
-    asignar valor de tep
-  if tasa efectiva
-    calcular tasa y asignarla
-  else
-    nada  
-  */
+function getDaysPerFrequency(frequency){
+  switch(frequency){
+    case 'daily':
+      return 1
+    case 'biweekly':
+      return 15
+    case 'monthly':
+      return 30
+    case 'bimonthly':
+      return 60
+    case 'quarterly':
+      return 90
+    case 'four-monthly':
+      return 120
+    case 'six-monthly':
+      return 180
+    case 'yearly':
+      return 360
+    default:
+      console.log("No valid data.")
+  }
 }
 
+//CHECK RATE AND CALCULATE ACCORDINGLY
+function calculateRate(data){
+  const paymentFrequencyDays = getDaysPerFrequency(data.paymentFrequency)
+  const rateFrequencyDays = getDaysPerFrequency(data.rateFrequency)
+  if(data.rateType === 'nominal'){
+    const m = (rateFrequencyDays)/(data.capitalization)
+    const n = paymentFrequencyDays/(data.capitalization)
+    reportResults.periodEffectiveRate = calculatePeriodEffectiveRateWithNominalRate(data.rateValue, n, m)
+  }else if(data.rateType === 'effective'){
+    reportResults.periodEffectiveRate = calculatePeriodEffectiveRateWithEffectiveRate(data.rateValue, paymentFrequencyDays, rateFrequencyDays)
+  }else{
+    console.log("There was an error.")
+  }
+}
+
+//CALCULATING TEP
+function calculatePeriodEffectiveRateWithNominalRate(rateValue, n, m){
+  let rate = roundPercentage((Math.pow(1 + ((rateValue/100)/ m), n)-1)*100)
+  return rate
+}
+
+function calculatePeriodEffectiveRateWithEffectiveRate(rateValue, paymentFrequencyDays, rateFrequencyDays){
+  let rate = roundPercentage((Math.pow(1 + (rateValue/100), (paymentFrequencyDays/rateFrequencyDays)) - 1) * 100)
+  return rate
+}
+
+
+
 function calculateLeasingResults(data){
+  const paymentFrequencyDays = getDaysPerFrequency(data.paymentFrequency)
   reportResults.ivaValue = roundDecimal(data.assetPrice / (1 + IGV) * IGV)
   reportResults.assetValue = roundDecimal(data.assetPrice - reportResults.ivaValue)
   reportResults.leasingValue = roundDecimal(reportResults.assetValue + data.notaryFees + data.registryFees + data.valuation + data.studyCommission + data.activationCommission)
-  //calculateRate()
+  calculateRate(data)
+  reportResults.quotasPerYear = DAYS_PER_YEAR/paymentFrequencyDays
+  reportResults.totalQuotas = data.leasingYears * reportResults.quotasPerYear
+}
+
+function calculateTotalResults(data){
+  
 }
 
 //cleans the fields
@@ -300,7 +350,8 @@ function onReset () {
                         <q-input class="p-2" outlined v-model="currentReport.leasingYears" label="Número de años" />
                         <q-select class="p-2" outlined v-model="currentReport.paymentFrequency" :options="periodicals" label="Frecuencia de pago" />
                         <q-select class="p-2" outlined v-model="currentReport.rateType" :options="rateOptions" label="Tipo de tasa de interés" />
-                        <q-select v-show="currentReport.rateType.value !== 'efectiva'" class="p-2" outlined v-model="currentReport.capitalization" :options="periodicals" label="Capitalización" />
+                        <q-select class="p-2" outlined v-model="currentReport.rateFrequency" :options="periodicals" label="Frecuencia de tasa" />
+                        <q-select v-show="currentReport.rateType.value !== 'effective'" class="p-2" outlined v-model="currentReport.capitalization" :options="periodicals" label="Capitalización" />
                         <q-input class="p-2" outlined v-model="currentReport.rateValue" label="Porcentaje de tasa" />
                         <q-input class="p-2" outlined v-model="currentReport.buyback" label="Porcentaje de recompra" />
                     </div>
@@ -358,7 +409,7 @@ function onReset () {
 
                         <q-field class="p-2" outlined label="Porcentaje de TEP" prefix="%" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.effectiveRate }}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.periodEffectiveRate }}</div>
                           </template>
                         </q-field>
 
