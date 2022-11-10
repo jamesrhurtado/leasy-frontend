@@ -222,8 +222,8 @@ const handleSubmit = async () => {
   const showResults = true;
   const showSchedule = true;
   calculateLeasingResults(storableData)
-  //calculateTotalResults(storableData)
-  //calculatePermanentSpendings(storableData)
+  calculateTotalResults(storableData)
+  calculateRecurringCosts(storableData)
   //calculateProfitabilityIndicators(storableData)
   //generateSchedule(storableData)
 }
@@ -324,7 +324,21 @@ function calculateLeasingResults(data){
 }
 
 function calculateTotalResults(data){
-  
+  //intereses: suma de todos intereses de tabla
+  //amortizacion: suma de todos amort de tabla
+  //seg riesgo: suma riesgo tabla
+  //suma comisiones tabla
+  //suma recompra tabla
+  //suma de todos estos valores de arriba ^
+}
+
+function calculateRecurringCosts(data){
+  reportResults.riskInsuranceValue = calculateRiskInsuranceValue(data.riskInsurance, data.assetPrice, reportResults.quotasPerYear)
+}
+
+function calculateRiskInsuranceValue(riskInsurance, assetPrice, quotasPerYear){
+  let value = (riskInsurance/100 * assetPrice)/ quotasPerYear
+  return value
 }
 
 //cleans the fields
