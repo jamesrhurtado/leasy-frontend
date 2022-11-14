@@ -1,10 +1,13 @@
 <script setup>
 
-import { useQuasar } from 'quasar'
+import { useQuasar, QSpinnerGears } from 'quasar'
 import { ref, reactive } from 'vue'
 import {ReportsService} from '@/reports/services/reports.service.js'
 import { useSettingsStore } from '../../stores/settings.store.js';
 import { useAuthStore } from '../../stores/auth.store.js';
+import { onBeforeUnmount } from 'vue'
+
+let timer
 
 const SettingsStore = useSettingsStore()
 const settings  = SettingsStore.settings;
@@ -41,6 +44,37 @@ const $q = useQuasar()
 const name = ref(null)
 const reportsService = new ReportsService()
 
+
+
+
+//loading
+onBeforeUnmount(() => {
+  if (timer !== void 0) {
+    clearTimeout(timer)
+    $q.loading.hide()
+  }
+})
+
+function showLoading () {
+  $q.loading.show({
+    message: 'Calculando resultados'
+  })
+
+  timer = setTimeout(() => {
+    $q.loading.show({
+      spinner: QSpinnerGears,
+      spinnerColor: 'gray',
+      messageColor: 'white',
+      backgroundColor: 'green-9',
+      message: 'Generando tabla'
+    })
+
+    timer = setTimeout(() => {
+      $q.loading.hide()
+      timer = void 0
+    }, 2000)
+  }, 2000)
+}
 //stores data to save report
 const currentReport = reactive({
     assetPrice: "",
@@ -92,8 +126,8 @@ const VAT = (settings.valueAddedTax)/100
 const INCOME_TAX = (settings.incomeTax)/100
 const DAYS_PER_YEAR = settings.daysPerYear
 
-const showResults = true;
-const showSchedule = true;
+let showResults = false;
+let showSchedule = false;
 
 const accept = ref(false)
 
@@ -123,8 +157,12 @@ const handleSubmit = async () => {
   validateInputFields()
   const storableData = loadData()
   //await reportsApiService.create(storableData)
-  const showResults = true;
-  const showSchedule = true;
+  console.log(showResults)
+  console.log(showSchedule)
+  showResults = true;
+  showSchedule = true;
+  console.log(showResults)
+  console.log(showSchedule)
   calculateLeasingResults(storableData)
   calculateTotalResults(storableData)
   calculateRecurringCosts(storableData)
@@ -397,7 +435,7 @@ function onReset () {
                         <q-input class="p-2" outlined v-model="currentReport.waccRate" label="Tasa de descuento WACC" />
                     </div>
                     <div>
-                        <q-btn color="black" label="Calcular" type="submit" />
+                        <q-btn color="black" label="Calcular" type="submit" @click="showLoading"/>
                     </div>
                     <div>
                         <q-btn color="red" label="Limpiar" />
@@ -405,6 +443,7 @@ function onReset () {
                 </div>
             </form>
     </div>
+
     <div v-show="showResults" class="font-dm-sans-bold text-xl">Resultados</div>
         <q-separator />
             <div v-show="showResults" class="q-gutter-md">
