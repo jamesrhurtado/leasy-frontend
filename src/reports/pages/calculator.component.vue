@@ -16,128 +16,26 @@ const user = UserStore.user
 //Columns
 const columns = [
   { name: 'periodo', required: true, label: 'Número', align: 'center', field: 'periodo', format: val => `${val}`, sortable: true},
-  { name: 'calories', align: 'center', label: 'P.G.', field: 'calories', sortable: true },
-  { name: 'fat', label: 'Saldo inicial', field: 'fat', sortable: true },
-  { name: 'carbs', label: 'Interés', field: 'carbs' },
-  { name: 'protein', label: 'Cuota', field: 'protein' },
-  { name: 'sodium', label: 'Amortización', field: 'sodium' },
-  { name: 'calcium', label: 'Seguro riesgo', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-  { name: 'iron', label: 'Comisión', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-  { name: 'protein', label: 'Recompra', field: 'protein' },
-  { name: 'protein', label: 'Saldo final', field: 'protein' },
-  { name: 'protein', label: 'Depreciacion', field: 'protein' },
-  { name: 'protein', label: 'Ahorro tributario', field: 'protein' },
-  { name: 'protein', label: 'IGV', field: 'protein' },
-  { name: 'protein', label: 'Flujo bruto', field: 'protein' },
-  { name: 'protein', label: 'Flujo con IGV', field: 'protein' },
-  { name: 'protein', label: 'Flujo neto', field: 'protein' },
+  { name: 'gp', align: 'center', label: 'P.G.', field: 'gp', sortable: true },
+  { name: 'initialValue', label: 'Saldo inicial', field: 'initialValue', sortable: true },
+  { name: 'interest', label: 'Interés', field: 'interest' },
+  { name: 'quota', label: 'Cuota', field: 'quota' },
+  { name: 'repayment', label: 'Amortización', field: 'repayment' },
+  { name: 'riskInsurance', label: 'Seguro riesgo', field: 'riskInsurance', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
+  { name: 'comission', label: 'Comisión', field: 'comission', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
+  { name: 'buyback', label: 'Recompra', field: 'buyback' },
+  { name: 'finalValue', label: 'Saldo final', field: 'finalValue' },
+  { name: 'depreciation', label: 'Depreciacion', field: 'depreciation' },
+  { name: 'taxSaving', label: 'Ahorro tributario', field: 'taxSaving' },
+  { name: 'ivaQuota', label: 'IGV', field: 'ivaQuota' },
+  { name: 'grossFlow', label: 'Flujo bruto', field: 'grossFlow' },
+  { name: 'ivaFlow', label: 'Flujo con IGV', field: 'ivaFlow' },
+  { name: 'netFlow', label: 'Flujo neto', field: 'netFlow' },
 ]
 
 //Template for table
 //Rows
-
-const rows = [
-  {
-    periodo: 1,
-    calories: 159,
-    fat: 6.0,
-    carbs: 24,
-    protein: 4.0,
-    sodium: 87,
-    calcium: '14%',
-    iron: '1%'
-  },
-  {
-    periodo: 2,
-    calories: 237,
-    fat: 9.0,
-    carbs: 37,
-    protein: 4.3,
-    sodium: 129,
-    calcium: '8%',
-    iron: '1%'
-  },
-  {
-    periodo: 3,
-    calories: 262,
-    fat: 16.0,
-    carbs: 23,
-    protein: 6.0,
-    sodium: 337,
-    calcium: '6%',
-    iron: '7%'
-  },
-  {
-    periodo:4,
-    calories: 305,
-    fat: 3.7,
-    carbs: 67,
-    protein: 4.3,
-    sodium: 413,
-    calcium: '3%',
-    iron: '8%'
-  },
-  {
-    periodo: 5,
-    calories: 356,
-    fat: 16.0,
-    carbs: 49,
-    protein: 3.9,
-    sodium: 327,
-    calcium: '7%',
-    iron: '16%'
-  },
-  {
-    periodo: 6,
-    calories: 375,
-    fat: 0.0,
-    carbs: 94,
-    protein: 0.0,
-    sodium: 50,
-    calcium: '0%',
-    iron: '0%'
-  },
-  {
-    periodo: 7,
-    calories: 392,
-    fat: 0.2,
-    carbs: 98,
-    protein: 0,
-    sodium: 38,
-    calcium: '0%',
-    iron: '2%'
-  },
-  {
-    periodo: 8,
-    calories: 408,
-    fat: 3.2,
-    carbs: 87,
-    protein: 6.5,
-    sodium: 562,
-    calcium: '0%',
-    iron: '45%'
-  },
-  {
-    periodo: 9,
-    calories: 452,
-    fat: 25.0,
-    carbs: 51,
-    protein: 4.9,
-    sodium: 326,
-    calcium: '2%',
-    iron: '22%'
-  },
-  {
-    periodo: 10,
-    calories: 518,
-    fat: 26.0,
-    carbs: 65,
-    protein: 7,
-    sodium: 54,
-    calcium: '12%',
-    iron: '6%'
-  }
-]
+const rows = []
 
 const $q = useQuasar()
 const name = ref(null)
@@ -227,6 +125,7 @@ const handleSubmit = async () => {
   calculateRecurringCosts(storableData)
   calculateProfitabilityIndicators(storableData)
   generateSchedule(storableData)
+  console.log(rows)
 }
 
 //returns the data in a storable type (string-> number)
@@ -241,7 +140,7 @@ function loadData(){
     rateFrequency: currentReport.rateFrequency.value,
     capitalization: currentReport.capitalization.value,
     rateValue: roundPercentage(parseFloat(currentReport.rateValue)),
-    buyback: roundDecimal((currentReport.buyback)),
+    buyback: roundPercentage((currentReport.buyback)),
     notaryFees: roundDecimal((currentReport.notaryFees)),
     registryFees: roundDecimal((currentReport.registryFees)),
     valuation: roundDecimal((currentReport.valuation)),
@@ -323,6 +222,7 @@ function calculateLeasingResults(data){
 }
 
 function calculateTotalResults(data){
+  reportResults.periodicCommissions = roundDecimal(data.regularCommission * reportResults.totalQuotas)
   //intereses: suma de todos intereses de tabla
   //amortizacion: suma de todos amort de tabla
   //seg riesgo: suma riesgo tabla
@@ -347,24 +247,60 @@ function calculateProfitabilityIndicators(data){
 
 function generateSchedule(data){
   let initialValue = reportResults.leasingValue
-  let repayment = reportResults.leasingValue/reportResults.totalQuotas
-  
-  for(let i=0; i < reportResults.totalQuotas; i++){
-    let interest = initialValue * reportResults.periodEffectiveRate
-    let quota = interest + repayment
+  let repayment = (reportResults.leasingValue/reportResults.totalQuotas)
+  let totalRiskInsurance = 0
+  let ivaQuota = 0
+  let grossFlow = 0
+  let ivaFlow = 0
+  let netFlow = 0
+  let depreciation = (reportResults.assetValue / reportResults.totalQuotas)
+  //recompra
+  let buyback = 0
+  for(let i=1; i <= reportResults.totalQuotas; i++){
+    let interest = (initialValue * (reportResults.periodEffectiveRate/100))
+    let quota = (interest + repayment)
     //contador para sumar cuotas consecutivas
     let finalValue = initialValue - repayment
     //contador para sumar seguro riesgo
-    //let taxSaving = (interest + riskInsuranceValue + comisiones + depreciacion)*INCOME_TAX
-    //counter for gross flow
-    //igv cuota
+    totalRiskInsurance += reportResults.riskInsuranceValue
+    let taxSaving = (interest + reportResults.riskInsuranceValue + data.regularCommission + depreciation)*INCOME_TAX
+    if(i === reportResults.totalQuotas){
+      buyback = (reportResults.assetValue * (data.buyback/100))
+      grossFlow = quota + reportResults.riskInsuranceValue + data.regularCommission + buyback
+      ivaQuota = grossFlow * VAT
+      ivaFlow = (grossFlow + ivaQuota)
+      netFlow = (grossFlow - taxSaving)
+    }else{
+      grossFlow = quota + reportResults.riskInsuranceValue + data.regularCommission + buyback
+      ivaQuota = (grossFlow * VAT)
+      ivaFlow = (grossFlow + ivaQuota)
+      netFlow = (grossFlow - taxSaving)
+    }
     //flujo igv
     //flujo neto
 
     //counter for van gross flow
-
     //counter for van net flow
-    rows.push({})
+    //add new row to table
+    rows.push({
+      periodo: i,
+      gp: 'S',
+      initialValue: roundDecimal(initialValue),
+      interest: roundDecimal(interest),
+      quota: roundDecimal(quota),
+      repayment: roundDecimal(repayment),
+      riskInsurance: reportResults.riskInsuranceValue,
+      comission: data.regularCommission,
+      buyback: roundDecimal(buyback),
+      finalValue: roundDecimal(finalValue),
+      depreciation: roundDecimal(depreciation),
+      taxSaving: roundDecimal(taxSaving),
+      ivaQuota: roundDecimal(ivaQuota),
+      grossFlow: roundDecimal(grossFlow),
+      ivaFlow: roundDecimal(ivaFlow),
+      netFlow: roundDecimal(netFlow)
+    })
+    initialValue = finalValue
   }
 }
 
