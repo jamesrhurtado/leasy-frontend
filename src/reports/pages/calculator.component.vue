@@ -35,7 +35,7 @@ const columns = [
 
 //Template for table
 //Rows
-const rows = []
+const rows = reactive([])
 
 const $q = useQuasar()
 const name = ref(null)
@@ -130,7 +130,7 @@ const handleSubmit = async () => {
   calculateRecurringCosts(storableData)
   calculateProfitabilityIndicators(storableData)
   generateSchedule(storableData)
-  console.log(rows)
+  console.log(rows.value)
 }
 
 //returns the data in a storable type (string-> number)
@@ -252,6 +252,8 @@ function calculateProfitabilityIndicators(data){
 function generateSchedule(data){
   let initialValue = reportResults.leasingValue
   let repayment = (reportResults.leasingValue/reportResults.totalQuotas)
+  let totalInterest = 0
+  let totalRepayment = 0
   let totalRiskInsurance = 0
   let ivaQuota = 0
   let grossFlow = 0
@@ -267,6 +269,8 @@ function generateSchedule(data){
   console.log(partialGracePeriods)
   for(let i=1; i <= reportResults.totalQuotas; i++){
     let interest = (initialValue * (reportResults.periodEffectiveRate/100))
+    totalInterest = totalInterest + interest
+    totalRepayment = totalRepayment + repayment
     let quota = (interest + repayment)
     //contador para sumar cuotas consecutivas
     let finalValue = initialValue - repayment
@@ -275,6 +279,7 @@ function generateSchedule(data){
     let taxSaving = (interest + reportResults.riskInsuranceValue + data.regularCommission + depreciation)*INCOME_TAX
     if(i === reportResults.totalQuotas){
       buyback = (reportResults.assetValue * (data.buyback/100))
+      reportResults.buybackValue = buyback
       grossFlow = quota + reportResults.riskInsuranceValue + data.regularCommission + buyback
       ivaQuota = grossFlow * VAT
       ivaFlow = (grossFlow + ivaQuota)
@@ -287,10 +292,8 @@ function generateSchedule(data){
     }
 
     if(totalGracePeriods.includes(i.toString())){
-      console.log("grace period is total!")
       gp = 'T'
     }else if(partialGracePeriods.includes(i.toString())){
-      console.log("grace period is partial!")
       gp = 'P'
     }else{
       gp = 'S'
@@ -321,6 +324,11 @@ function generateSchedule(data){
     })
     initialValue = finalValue
   }
+  reportResults.totalInterest = roundDecimal(totalInterest)
+  reportResults.totalRepayment = roundDecimal(totalRepayment)
+  reportResults.totalRiskInsurance = roundDecimal(totalRiskInsurance)
+  reportResults.periodicCommissions = roundDecimal(data.regularCommission * reportResults.totalQuotas)
+  reportResults.totalPayment = roundDecimal(totalInterest + totalRepayment + totalRiskInsurance + reportResults.periodicCommissions + reportResults.buybackValue)
 }
 
 //cleans the fields
@@ -447,7 +455,7 @@ function onReset () {
 
                         <q-field class="p-2" outlined label="Comisiones periodicas" stack-label readonly>
                           <template v-slot:control>
-                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.periodicComissions }}</div>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.periodicCommissions }}</div>
                           </template>
                         </q-field>
 
@@ -521,7 +529,7 @@ function onReset () {
 <style lang="sass">
 .my-sticky-header-table
   /* height or max-height is important */
-  height: 310px
+  height: 420px
 
   .q-table__top,
   .q-table__bottom,
