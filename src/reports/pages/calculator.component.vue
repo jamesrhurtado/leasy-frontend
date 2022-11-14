@@ -83,6 +83,11 @@ const reportResults = reactive({
   netFlowNpv : null
 })
 
+const gracePeriods = reactive({
+  total: null,
+  partial: null
+})
+
 const VAT = (settings.valueAddedTax)/100
 const INCOME_TAX = (settings.incomeTax)/100
 const DAYS_PER_YEAR = settings.daysPerYear
@@ -244,7 +249,6 @@ function calculateProfitabilityIndicators(data){
 
 }
 
-
 function generateSchedule(data){
   let initialValue = reportResults.leasingValue
   let repayment = (reportResults.leasingValue/reportResults.totalQuotas)
@@ -253,9 +257,14 @@ function generateSchedule(data){
   let grossFlow = 0
   let ivaFlow = 0
   let netFlow = 0
+  let gp = ''
   let depreciation = (reportResults.assetValue / reportResults.totalQuotas)
   //recompra
   let buyback = 0
+  const totalGracePeriods = gracePeriods.total.split(",")
+  const partialGracePeriods = gracePeriods.partial.split(",")
+  console.log(totalGracePeriods)
+  console.log(partialGracePeriods)
   for(let i=1; i <= reportResults.totalQuotas; i++){
     let interest = (initialValue * (reportResults.periodEffectiveRate/100))
     let quota = (interest + repayment)
@@ -276,6 +285,16 @@ function generateSchedule(data){
       ivaFlow = (grossFlow + ivaQuota)
       netFlow = (grossFlow - taxSaving)
     }
+
+    if(totalGracePeriods.includes(i.toString())){
+      console.log("grace period is total!")
+      gp = 'T'
+    }else if(partialGracePeriods.includes(i.toString())){
+      console.log("grace period is partial!")
+      gp = 'P'
+    }else{
+      gp = 'S'
+    }
     //flujo igv
     //flujo neto
 
@@ -284,7 +303,7 @@ function generateSchedule(data){
     //add new row to table
     rows.push({
       periodo: i,
-      gp: 'S',
+      gp: gp,
       initialValue: roundDecimal(initialValue),
       interest: roundDecimal(interest),
       quota: roundDecimal(quota),
@@ -323,32 +342,34 @@ function onReset () {
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos del prestamo</div>
-                        <q-input class="p-2" outlined v-model="currentReport.assetPrice" label="Precio de venta del activo" />
-                        <q-input class="p-2" outlined v-model="currentReport.leasingYears" label="Número de años" />
+                        <q-input class="p-2" outlined v-model="currentReport.assetPrice" type="number" label="Precio de venta del activo" />
+                        <q-input class="p-2" outlined v-model="currentReport.leasingYears" type="number" label="Número de años" />
                         <q-select class="p-2" outlined v-model="currentReport.paymentFrequency" :options="periodicals" label="Frecuencia de pago" />
                         <q-select class="p-2" outlined v-model="currentReport.rateType" :options="rateOptions" label="Tipo de tasa de interés" />
                         <q-select class="p-2" outlined v-model="currentReport.rateFrequency" :options="periodicals" label="Frecuencia de tasa" />
                         <q-select v-show="currentReport.rateType.value !== 'effective'" class="p-2" outlined v-model="currentReport.capitalization" :options="periodicals" label="Capitalización" />
-                        <q-input class="p-2" outlined v-model="currentReport.rateValue" label="Porcentaje de tasa" />
-                        <q-input class="p-2" outlined v-model="currentReport.buyback" label="Porcentaje de recompra" />
+                        <q-input class="p-2" outlined v-model="currentReport.rateValue" type="number" label="Porcentaje de tasa" />
+                        <q-input class="p-2" outlined use-chips v-model="currentReport.buyback" label="Porcentaje de recompra" />
                     </div>
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos de costes/gastos iniciales</div>
-                        <q-input class="p-2" outlined v-model="currentReport.notaryFees" label="Costes notariales" />
-                        <q-input class="p-2" outlined v-model="currentReport.registryFees" label="Costes registrales" />
-                        <q-input class="p-2" outlined v-model="currentReport.valuation" label="Tasación" />
-                        <q-input class="p-2" outlined v-model="currentReport.studyCommission" label="Comisión de estudio" />
-                        <q-input class="p-2" outlined v-model="currentReport.activationCommission" label="Comisión de activación" />
+                        <q-input class="p-2" outlined v-model="currentReport.notaryFees" type="number" label="Costes notariales" />
+                        <q-input class="p-2" outlined v-model="currentReport.registryFees" type="number" label="Costes registrales" />
+                        <q-input class="p-2" outlined v-model="currentReport.valuation" type="number" label="Tasación" />
+                        <q-input class="p-2" outlined v-model="currentReport.studyCommission" type="number" label="Comisión de estudio" />
+                        <q-input class="p-2" outlined v-model="currentReport.activationCommission" type="number" label="Comisión de activación" />
+                        <q-input class="p-2" outlined v-model="gracePeriods.total" label="Periodos de Gracia Totales" />
+                        <q-input class="p-2" outlined v-model="gracePeriods.partial" label="Periodos de Gracia Parciales" />
                     </div>
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos de costes/gastos periódicos</div>
-                        <q-input class="p-2" outlined v-model="currentReport.regularCommission" label="Comisión periódica" />
+                        <q-input class="p-2" outlined v-model="currentReport.regularCommission" type="number" label="Comisión periódica" />
                         <q-input class="p-2" outlined v-model="currentReport.riskInsurance" label="Porcentaje de seguro de riesgo" />
                     </div>
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos del costo de oportunidad</div>
-                        <q-input class="p-2" outlined v-model="currentReport.ksRate " label="Tasa de descuento Ks" />
-                        <q-input class="p-2" outlined v-model="currentReport.waccRate" label="Tasa de descuento WACC" />
+                        <q-input class="p-2" outlined v-model="currentReport.ksRate " type="number" label="Tasa de descuento Ks" />
+                        <q-input class="p-2" outlined v-model="currentReport.waccRate" type="number" label="Tasa de descuento WACC" />
                     </div>
                     <div>
                         <q-btn color="black" label="Calcular" type="submit" />
