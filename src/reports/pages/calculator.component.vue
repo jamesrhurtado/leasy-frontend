@@ -265,8 +265,18 @@ function generateSchedule(data){
   let buyback = 0
   const totalGracePeriods = gracePeriods.total.split(",")
   const partialGracePeriods = gracePeriods.partial.split(",")
-  console.log(totalGracePeriods)
-  console.log(partialGracePeriods)
+  //VAN FLUJO BRUTO
+  let grossFlowNpv = 0
+  let rateGrossFlowNpv = (Math.pow(1 + (data.ksRate)/100, getDaysPerFrequency(data.paymentFrequency)/DAYS_PER_YEAR ) - 1)
+  let grossFlowNpvPerQuota = 0
+  let sumGrossFlowVpn = 0
+
+  //VAN FLUJO NETO
+  let netFlowNpv = 0
+  let rateNetFlowNpv = (Math.pow(1 + (data.waccRate)/100, getDaysPerFrequency(data.paymentFrequency)/DAYS_PER_YEAR ) - 1)
+  let netFlowNpvPerQuota = 0
+  let sumNetFlowVpn = 0
+
   for(let i=1; i <= reportResults.totalQuotas; i++){
     let interest = (initialValue * (reportResults.periodEffectiveRate/100))
     totalInterest = totalInterest + interest
@@ -298,12 +308,17 @@ function generateSchedule(data){
     }else{
       gp = 'S'
     }
-    //flujo igv
-    //flujo neto
+    //VAN flujo bruto
+    grossFlowNpvPerQuota = (grossFlow / Math.pow(1 + rateGrossFlowNpv, i))
+    sumGrossFlowVpn = sumGrossFlowVpn + grossFlowNpvPerQuota
+    grossFlowNpvPerQuota = 0
 
-    //counter for van gross flow
-    //counter for van net flow
-    //add new row to table
+    //VAN flujo neto
+
+    netFlowNpvPerQuota = (netFlow / Math.pow(1 + rateNetFlowNpv, i))
+    sumNetFlowVpn = sumNetFlowVpn + netFlowNpvPerQuota
+    netFlowNpvPerQuota = 0
+
     rows.push({
       periodo: i,
       gp: gp,
@@ -329,6 +344,8 @@ function generateSchedule(data){
   reportResults.totalRiskInsurance = roundDecimal(totalRiskInsurance)
   reportResults.periodicCommissions = roundDecimal(data.regularCommission * reportResults.totalQuotas)
   reportResults.totalPayment = roundDecimal(totalInterest + totalRepayment + totalRiskInsurance + reportResults.periodicCommissions + reportResults.buybackValue)
+  reportResults.grossFlowNpv = roundDecimal(reportResults.leasingValue - sumGrossFlowVpn)
+  reportResults.netFlowNpv =  roundDecimal( reportResults.leasingValue - sumNetFlowVpn)
 }
 
 //cleans the fields
@@ -376,8 +393,8 @@ function onReset () {
                     </div>
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos del costo de oportunidad</div>
-                        <q-input class="p-2" outlined v-model="currentReport.ksRate " type="number" label="Tasa de descuento Ks" />
-                        <q-input class="p-2" outlined v-model="currentReport.waccRate" type="number" label="Tasa de descuento WACC" />
+                        <q-input class="p-2" outlined v-model="currentReport.ksRate " label="Tasa de descuento Ks" />
+                        <q-input class="p-2" outlined v-model="currentReport.waccRate" label="Tasa de descuento WACC" />
                     </div>
                     <div>
                         <q-btn color="black" label="Calcular" type="submit" />
