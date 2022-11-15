@@ -1,7 +1,7 @@
 <script setup>
 
 import { useQuasar, QSpinnerGears } from 'quasar'
-import { ref, reactive } from 'vue'
+import { ref, reactive, nextTick } from 'vue'
 import {ReportsService} from '@/reports/services/reports.service.js'
 import { useSettingsStore } from '../../stores/settings.store.js';
 import { useAuthStore } from '../../stores/auth.store.js';
@@ -43,10 +43,6 @@ const rows = reactive([])
 const $q = useQuasar()
 const name = ref(null)
 const reportsService = new ReportsService()
-
-
-
-
 //loading
 onBeforeUnmount(() => {
   if (timer !== void 0) {
@@ -127,7 +123,6 @@ const INCOME_TAX = (settings.incomeTax)/100
 const DAYS_PER_YEAR = settings.daysPerYear
 
 let showResults = false;
-let showSchedule = false;
 
 const accept = ref(false)
 
@@ -153,16 +148,20 @@ function validateInputFields(){
 
 }
 
+
+function showText(){
+  console.log(showResults)
+  showResults = !showResults
+  console.log(showResults)
+}
+
 const handleSubmit = async () => {
+  console.log(showResults)
+  showResults = true;
+  console.log(showResults)
   validateInputFields()
   const storableData = loadData()
   //await reportsApiService.create(storableData)
-  console.log(showResults)
-  console.log(showSchedule)
-  showResults = true;
-  showSchedule = true;
-  console.log(showResults)
-  console.log(showSchedule)
   calculateLeasingResults(storableData)
   calculateTotalResults(storableData)
   calculateRecurringCosts(storableData)
@@ -444,9 +443,9 @@ function onReset () {
             </form>
     </div>
 
-    <div v-show="showResults" class="font-dm-sans-bold text-xl">Resultados</div>
+    <div v-if="showResults" class="font-dm-sans-bold text-xl">Resultados</div>
         <q-separator />
-            <div v-show="showResults" class="q-gutter-md">
+            <div class="q-gutter-md">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Resultados de arrendamiento</div>
@@ -567,9 +566,9 @@ function onReset () {
                     </div>
                 </div>
               </div>
-    <div v-show="showSchedule" class="font-dm-sans-bold text-xl my-3">Cronograma</div>
+    <div class="font-dm-sans-bold text-xl my-3">Cronograma</div>
     <q-separator />
-      <div v-show="showSchedule" class="q-pa-md">
+      <div class="q-pa-md">
       <q-table
         class="my-sticky-header-table"
         title="Schedule for Leasing"
