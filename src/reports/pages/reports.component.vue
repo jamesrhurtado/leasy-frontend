@@ -3,6 +3,7 @@ import { useQuasar } from 'quasar'
 import {ReportsService} from '@/reports/services/reports.service.js'
 import { useAuthStore } from '../../stores/auth.store.js';
 import { ref, onMounted } from 'vue'
+import Header from '@/components/header.component.vue'
 
 const UserStore = useAuthStore()
 const user = UserStore.user
@@ -64,8 +65,8 @@ onMounted(() => {
 </script>
 
 <template>
-  
-  <div class="w-auto m-auto my-6 font-dm-sans-regular">
+  <Header />
+  <div class="w-auto m-auto my-6 font-dm-sans-regular pt-28">
         <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-4xl md:text-5xl">Historial</div>
         <q-separator />
         <div v-if="reports.length === 0">
@@ -209,7 +210,7 @@ onMounted(() => {
     </div>
 </template>
 
-<style>
+<style scoped>
 
 body{
     display: block;

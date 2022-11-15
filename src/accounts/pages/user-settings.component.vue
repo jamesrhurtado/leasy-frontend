@@ -4,6 +4,7 @@ import { ref, computed } from 'vue'
 import {SettingsService} from '@/accounts/services/settings.service.js'
 import { useSettingsStore } from '../../stores/settings.store.js';
 import { useAuthStore } from '../../stores/auth.store.js';
+import Header from '@/components/header.component.vue'
 
 const SettingsStore = useSettingsStore()
 const settings  = computed(() => SettingsStore.settings);
@@ -116,7 +117,8 @@ function promptIncomeTax() {
 </script>
 
 <template>
-    <div class="grid shadow-md w-auto m-auto my-6 font-dm-sans-regular">
+  <Header />
+    <div class="grid shadow-md w-auto m-auto my-3 pt-28 font-dm-sans-regular">
         <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
             Configuraciones
         </div>

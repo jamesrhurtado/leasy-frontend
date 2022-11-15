@@ -393,7 +393,7 @@ function onReset () {
 <template>
   <Header />
     <div class="w-auto m-auto my-6 font-dm-sans-regular">
-        <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-4xl md:text-5xl pt-16 mt-10">Leasing</div>
+        <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-4xl md:text-5xl pt-28">Leasing</div>
         <div class="font-dm-sans-bold text-xl">Ingrese los datos</div>
         <q-separator />
             <form @submit.prevent.stop="handleSubmit" @reset.prevent.stop="onReset" class="q-gutter-md">
@@ -577,7 +577,7 @@ function onReset () {
     </div>
 </template>
 
-<style lang="sass">
+<style lang="sass" scoped>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 420px

@@ -28,7 +28,7 @@
         <RouterLink to="/calculator" id="RouCalculator" class="ruta">Calculadora</RouterLink>
       </div>
       <div class="controlApp">
-        <a href="#" id="RouHistorial" class="ruta">Historial</a>
+        <RouterLink to="/reports" id="RouHistorial" class="ruta">Historial</RouterLink>
       </div>
       <div class="controlApp">
         <RouterLink to="/settings" id="RouSetting" class="ruta">Configuraciones</RouterLink>

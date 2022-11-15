@@ -15,7 +15,6 @@ import { useRouter, RouterLink } from "vue-router";
       ubicacionPrincipal = Desplazamiento_Actual;
   }
 
-// ----------------------
 </script>
 
 
