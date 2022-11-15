@@ -2,6 +2,7 @@
 import { useQuasar } from 'quasar'
 import {ReportsService} from '@/reports/services/reports.service.js'
 import { useAuthStore } from '../../stores/auth.store.js';
+import { ref, onMounted } from 'vue'
 
 const UserStore = useAuthStore()
 const user = UserStore.user
@@ -9,49 +10,57 @@ const user = UserStore.user
 const $q = useQuasar()
 
 const reportsService = new ReportsService()
+let reports = []
+const fetchReports = async() => {
+    reports = await reportsService.getAllByUserId(user.id)
+}
 
-const reports = [
-  {
-    "id": 1,
-    "assetPrice": 1000,
-    "leasingYears": 3,
-    "paymentFrequency": "string",
-    "rateType": "string",
-    "rateValue": 0,
-    "rateFrequency": "string",
-    "capitalization": "string",
-    "buyback": 0,
-    "notaryFees": 0,
-    "registryFees": 0,
-    "valuation": 0,
-    "studyCommission": 0,
-    "activationCommission": 0,
-    "regularCommission": 0,
-    "riskInsurance": 0,
-    "rateKs": 0,
-    "rateWacc": 0
-  },
-  {
-    "id": 2,
-    "assetPrice": 2000,
-    "leasingYears": 6,
-    "paymentFrequency": "string",
-    "rateType": "string",
-    "rateValue": 0,
-    "rateFrequency": "string",
-    "capitalization": "string",
-    "buyback": 0,
-    "notaryFees": 0,
-    "registryFees": 0,
-    "valuation": 0,
-    "studyCommission": 0,
-    "activationCommission": 0,
-    "regularCommission": 0,
-    "riskInsurance": 0,
-    "rateKs": 0,
-    "rateWacc": 0
-  }
-]
+onMounted(() => {
+    fetchReports()
+})
+
+// reports = [
+//   {
+//     "id": 1,
+//     "assetPrice": 1000,
+//     "leasingYears": 3,
+//     "paymentFrequency": "string",
+//     "rateType": "string",
+//     "rateValue": 0,
+//     "rateFrequency": "string",
+//     "capitalization": "string",
+//     "buyback": 0,
+//     "notaryFees": 0,
+//     "registryFees": 0,
+//     "valuation": 0,
+//     "studyCommission": 0,
+//     "activationCommission": 0,
+//     "regularCommission": 0,
+//     "riskInsurance": 0,
+//     "rateKs": 0,
+//     "rateWacc": 0
+//   },
+//   {
+//     "id": 2,
+//     "assetPrice": 2000,
+//     "leasingYears": 6,
+//     "paymentFrequency": "string",
+//     "rateType": "string",
+//     "rateValue": 0,
+//     "rateFrequency": "string",
+//     "capitalization": "string",
+//     "buyback": 0,
+//     "notaryFees": 0,
+//     "registryFees": 0,
+//     "valuation": 0,
+//     "studyCommission": 0,
+//     "activationCommission": 0,
+//     "regularCommission": 0,
+//     "riskInsurance": 0,
+//     "rateKs": 0,
+//     "rateWacc": 0
+//   }
+// ]
 </script>
 
 <template>
@@ -59,6 +68,18 @@ const reports = [
   <div class="w-auto m-auto my-6 font-dm-sans-regular">
         <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-4xl md:text-5xl">Historial</div>
         <q-separator />
+        <div v-if="reports.length === 0">
+            <div class="q-pa-md q-gutter-sm">
+                <q-banner inline-actions rounded class="bg-secondary text-white">
+                No cuenta con ningun reporte realizado.
+
+                <template v-slot:action>
+                    <q-btn flat label="Ir a calculadora" />
+                    <q-btn flat label="Cerrar" />
+                </template>
+                </q-banner>
+            </div>
+        </div>
 
         <div v-for="report, index in reports" v-bind:key="report.id">
             <div> Reporte numero: {{index + 1}}</div>
