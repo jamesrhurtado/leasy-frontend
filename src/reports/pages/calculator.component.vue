@@ -6,6 +6,7 @@ import {ReportsService} from '@/reports/services/reports.service.js'
 import { useSettingsStore } from '../../stores/settings.store.js';
 import { useAuthStore } from '../../stores/auth.store.js';
 import { onBeforeUnmount } from 'vue'
+import Header from '@/components/header.component.vue'
 
 let timer
 
@@ -265,12 +266,6 @@ function calculateLeasingResults(data){
 
 function calculateTotalResults(data){
   reportResults.periodicCommissions = roundDecimal(data.regularCommission * reportResults.totalQuotas)
-  //intereses: suma de todos intereses de tabla
-  //amortizacion: suma de todos amort de tabla
-  //seg riesgo: suma riesgo tabla
-  //suma comisiones tabla
-  //suma recompra tabla
-  //suma de todos estos valores de arriba ^
 }
 
 function calculateRecurringCosts(data){
@@ -396,8 +391,9 @@ function onReset () {
 </script>
 
 <template>
+  <Header />
     <div class="w-auto m-auto my-6 font-dm-sans-regular">
-        <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-4xl md:text-5xl">Leasing</div>
+        <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-4xl md:text-5xl pt-16 mt-10">Leasing</div>
         <div class="font-dm-sans-bold text-xl">Ingrese los datos</div>
         <q-separator />
             <form @submit.prevent.stop="handleSubmit" @reset.prevent.stop="onReset" class="q-gutter-md">

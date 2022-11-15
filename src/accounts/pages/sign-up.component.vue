@@ -3,6 +3,7 @@ import { useQuasar } from 'quasar'
 import { ref, reactive } from 'vue'
 import {AuthService} from '../services/auth.service'
 import { useRouter, RouterLink } from "vue-router";
+import AuthHeader from '@/components/auth-header.component.vue'
 
 const authService = new AuthService()
 const router = useRouter();
@@ -85,7 +86,8 @@ const validateData = () => {
 </script>
 
 <template>
-    <div class="grid shadow-md w-96 m-auto my-6 font-dm-sans-regular">
+    <AuthHeader />
+    <div class="grid shadow-md w-96 m-auto my-6 font-dm-sans-regular pt-4 mt-24">
         <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
             Registrarse
         </div>

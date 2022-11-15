@@ -39,6 +39,11 @@ const router = createRouter({
       name: 'Reports',
       component: () => import('@/reports/pages/reports.component.vue')
     },
+    {
+      path: '/header',
+      name: 'Header',
+      component: () => import('@/components/header.component.vue')
+    },
   ]
 })
 
