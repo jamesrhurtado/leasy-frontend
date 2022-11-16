@@ -1,18 +1,35 @@
 <script setup>
-  import { useRouter, RouterLink, routeLocationKey } from "vue-router";
-  let ubicacionPrincipal  = window.pageYOffset;
-  // let headerMaster = document.getElementById('headerApp');
+import { useQuasar } from 'quasar'
+import { useRouter, RouterLink, routeLocationKey } from "vue-router";
+import { useAuthStore } from '@/stores/auth.store.js';
+const authStore = useAuthStore()
+const router = useRouter();
+const $q = useQuasar()
 
-  window.onscroll = function() {
-    let Desplazamiento_Actual = window.pageYOffset;
-    if(ubicacionPrincipal >= Desplazamiento_Actual){
-      document.getElementById('headerApp').style.top = '0';
-    }
-    else{
-      document.getElementById('headerApp').style.top = '-100px';
-    }
-    ubicacionPrincipal = Desplazamiento_Actual;
+const handleLogOut = () => {
+    authStore.logout()
+    router.push("/sign-in");
+    $q.notify({
+      color: 'positive',
+      message: 'Se ha cerrado la sesion.',
+      actions: [
+        { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+      ]
+    })
+}
+let ubicacionPrincipal  = window.pageYOffset;
+// let headerMaster = document.getElementById('headerApp');
+
+window.onscroll = function() {
+  let Desplazamiento_Actual = window.pageYOffset;
+  if(ubicacionPrincipal >= Desplazamiento_Actual){
+    document.getElementById('headerApp').style.top = '0';
   }
+  else{
+    document.getElementById('headerApp').style.top = '-100px';
+  }
+  ubicacionPrincipal = Desplazamiento_Actual;
+}
 
 </script>
 
@@ -36,7 +53,7 @@
       <div class="controlApp">
         <RouterLink to="/my-profile" id="RouProfile" class="ruta">Mi perfil</RouterLink>
       </div>
-      <div class="controlApp">
+      <div class="controlApp" @click="handleLogOut">
         <RouterLink to="/sign-in" id="RouSingIn" class="ruta">Cerrar Sesión</RouterLink>
       </div>
     </div>
