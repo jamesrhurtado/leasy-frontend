@@ -4,6 +4,7 @@ import {ReportsService} from '@/reports/services/reports.service.js'
 import { useAuthStore } from '../../stores/auth.store.js';
 import { ref, onMounted } from 'vue'
 import Header from '@/components/header.component.vue'
+import Footer from '@/components/footer.component.vue'
 
 const UserStore = useAuthStore()
 const user = UserStore.user
@@ -208,6 +209,7 @@ onMounted(() => {
             </div>           
         </div>
     </div>
+    <Footer />
 </template>
 
 <style scoped>

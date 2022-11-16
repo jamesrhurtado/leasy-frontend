@@ -4,6 +4,7 @@ import { ref, reactive } from 'vue'
 import { useRouter, RouterLink } from "vue-router";
 import { useAuthStore } from '../../stores/auth.store.js';
 import AuthHeader from '@/components/auth-header.component.vue';
+import Footer from '@/components/footer.component.vue'
 
 </script>
 <template> 
@@ -40,7 +41,7 @@ import AuthHeader from '@/components/auth-header.component.vue';
     <div class="w-80 h-auto m-auto my-20 container-img" >
         <img alt="logo finanzas" src="@/assets/logof.png"/>
     </div>
-
+    <Footer />
 </template>
 
 <style>

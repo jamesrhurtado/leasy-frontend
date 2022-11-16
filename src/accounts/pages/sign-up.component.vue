@@ -4,6 +4,7 @@ import { ref, reactive } from 'vue'
 import {AuthService} from '../services/auth.service'
 import { useRouter, RouterLink } from "vue-router";
 import AuthHeader from '@/components/auth-header.component.vue'
+import Footer from '@/components/footer.component.vue'
 
 const authService = new AuthService()
 const router = useRouter();
@@ -162,6 +163,7 @@ const validateData = () => {
         </RouterLink>
         </div>
     </div>
+    <Footer />
 </template>
 <style>
 

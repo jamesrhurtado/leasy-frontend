@@ -1,5 +1,4 @@
 <script setup>
-
 import { useQuasar, QSpinnerGears } from 'quasar'
 import { ref, reactive, nextTick } from 'vue'
 import {ReportsService} from '@/reports/services/reports.service.js'
@@ -7,6 +6,7 @@ import { useSettingsStore } from '../../stores/settings.store.js';
 import { useAuthStore } from '../../stores/auth.store.js';
 import { onBeforeUnmount } from 'vue'
 import Header from '@/components/header.component.vue'
+import Footer from '@/components/footer.component.vue'
 
 let timer
 
@@ -587,6 +587,7 @@ function onReset () {
         bordered
       />
     </div>
+    <Footer />
 </template>
 
 <style lang="sass" scoped>

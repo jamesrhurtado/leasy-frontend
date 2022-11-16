@@ -4,6 +4,7 @@ import { ref, reactive } from 'vue'
 import { useRouter, RouterLink } from "vue-router";
 import { AuthService } from '../services/auth.service';
 import AuthHeader from '@/components/auth-header.component.vue'
+import Footer from '@/components/footer.component.vue'
 
 const $q = useQuasar()
 const authService = new AuthService()
@@ -106,6 +107,7 @@ const handleSubmit = async () => {
         </RouterLink>
         </div>
     </div>
+    <Footer />
 </template>
 <style>
 

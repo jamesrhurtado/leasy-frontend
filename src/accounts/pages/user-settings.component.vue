@@ -5,6 +5,8 @@ import {SettingsService} from '@/accounts/services/settings.service.js'
 import { useSettingsStore } from '../../stores/settings.store.js';
 import { useAuthStore } from '../../stores/auth.store.js';
 import Header from '@/components/header.component.vue'
+import Footer from '@/components/footer.component.vue'
+
 
 const SettingsStore = useSettingsStore()
 const settings  = computed(() => SettingsStore.settings);
@@ -142,7 +144,8 @@ function promptIncomeTax() {
             <q-btn class="max-h-7 self-center max-w-[50%] justify-self-center" label="Editar" color="primary" @click="promptIncomeTax" />
         </div>
     </div>
-  
+    <Footer />
+    
 </template>
 
 

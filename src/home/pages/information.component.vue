@@ -4,6 +4,7 @@ import { ref, reactive } from 'vue'
 import { useRouter, RouterLink } from "vue-router";
 import { useAuthStore } from '../../stores/auth.store.js';
 import AuthHeader from '@/components/auth-header.component.vue';
+import Footer from '@/components/footer.component.vue'
 </script>
 <template> 
     <AuthHeader />
@@ -116,6 +117,7 @@ import AuthHeader from '@/components/auth-header.component.vue';
                 </RouterLink>
             </q-btn>
         </div>
+        <Footer />
 </template>
 
 <style>

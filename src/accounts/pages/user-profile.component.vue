@@ -1,6 +1,7 @@
 <script setup>
 import Header from '@/components/header.component.vue'
 import { useAuthStore } from '../../stores/auth.store.js';
+import Footer from '@/components/footer.component.vue'
 const UserStore = useAuthStore()
 const user = UserStore.user
 </script>
@@ -16,6 +17,7 @@ const user = UserStore.user
             <q-input class="p-4 m-2" outlined v-model="user.lastName" hint="Apellidos" :dense="dense" readonly />
             <q-input class="p-4 m-2 mb-6" outlined v-model="user.email" hint="Correo Electronico" :dense="dense" readonly />
         </div>
+        <Footer />
 </template>
 
 <style>
