@@ -146,7 +146,7 @@ const periodicals = [
 
 //ADD function to validate fields
 function validateInputFields(){
-
+//cannot be grace period in last period
 }
 
 
