@@ -302,6 +302,9 @@ function generateSchedule(data){
   let rateGrossFlowNpv = (Math.pow(1 + (data.ksRate)/100, getDaysPerFrequency(data.paymentFrequency)/DAYS_PER_YEAR ) - 1)
   let grossFlowNpvPerQuota = 0
   let sumGrossFlowVpn = 0
+  let quota = 0
+  let finalValue = 0
+  let interest = 0
 
   //VAN FLUJO NETO
   let netFlowNpv = 0
@@ -310,15 +313,31 @@ function generateSchedule(data){
   let sumNetFlowVpn = 0
 
   for(let i=1; i <= reportResults.totalQuotas; i++){
-    let interest = (initialValue * (reportResults.periodEffectiveRate/100))
+    interest = (initialValue * (reportResults.periodEffectiveRate/100))
     totalInterest = totalInterest + interest
-    totalRepayment = totalRepayment + repayment
-    let quota = (interest + repayment)
-    //contador para sumar cuotas consecutivas
-    let finalValue = initialValue - repayment
     //contador para sumar seguro riesgo
     totalRiskInsurance += reportResults.riskInsuranceValue
     let taxSaving = (interest + reportResults.riskInsuranceValue + data.regularCommission + depreciation)*INCOME_TAX
+    
+    if(totalGracePeriods.includes(i.toString())){
+      repayment = 0
+      quota = 0
+      finalValue = initialValue + interest
+      gp = 'T'
+    }else if(partialGracePeriods.includes(i.toString())){
+      repayment = 0
+      quota = interest
+      finalValue = initialValue
+      gp = 'P'
+    }else{
+      gp = 'S'
+      repayment = (initialValue/(reportResults.totalQuotas - i + 1))
+      quota = (interest + repayment)
+      finalValue = initialValue - repayment
+    }
+
+    totalRepayment = totalRepayment + repayment
+  
     if(i === reportResults.totalQuotas){
       buyback = (reportResults.assetValue * (data.buyback/100))
       reportResults.buybackValue = buyback
@@ -333,13 +352,6 @@ function generateSchedule(data){
       netFlow = (grossFlow - taxSaving)
     }
 
-    if(totalGracePeriods.includes(i.toString())){
-      gp = 'T'
-    }else if(partialGracePeriods.includes(i.toString())){
-      gp = 'P'
-    }else{
-      gp = 'S'
-    }
     //VAN flujo bruto
     grossFlowNpvPerQuota = (grossFlow / Math.pow(1 + rateGrossFlowNpv, i))
     sumGrossFlowVpn = sumGrossFlowVpn + grossFlowNpvPerQuota

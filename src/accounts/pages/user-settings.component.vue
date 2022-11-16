@@ -119,7 +119,7 @@ function promptIncomeTax() {
 <template>
   <Header />
     <div class="grid shadow-md w-auto m-auto my-3 pt-28 font-dm-sans-regular">
-        <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
+        <div class="heading heading-color font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
             Configuraciones
         </div>
         <div class="grid grid-cols-2 justify-center">
