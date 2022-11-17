@@ -9,7 +9,8 @@ import Footer from '@/components/footer.component.vue'
 
 
 const SettingsStore = useSettingsStore()
-const settings  = computed(() => SettingsStore.settings);
+// const settings  = computed(() => SettingsStore.settings);
+let settings  = SettingsStore.settings
 
 const UserStore = useAuthStore()
 const user = UserStore.user
@@ -18,23 +19,29 @@ const currency = ref("")
 const settingsService = new SettingsService()
 
 
-// //fetching user settings from Backend
-// const fetchSavedSettings = async () => {
+//fetching user settings from Backend
+const fetchSavedSettings = async () => {
+  const currentSettings = await settingsService.getByUserId(user.id)
+  console.log(user.id)
+  if(!currentSettings){
+    console.log("didnt found data in db! creating...")
+    //create settings with default values
+    await settingsService.create(settings)
+    SettingsStore.setUserId(user.id)
+  }else{
+    console.log("found data in db! updating...")
+    //update store with settings data got from Backend
+    SettingsStore.updateSettings(currentSettings.data)
+    SettingsStore.setId(currentSettings.data.id)
+    SettingsStore.setUserId(user.id)
+  }
+}
 
-//   const currentSettings = await settingsService.getByUserId(user.id)
-  
-//   if(!currentSettings){
-//     //create settings with default values
-//     await settingsService.create(settings)
-//   }else{
-//     //update store with settings data got from Backend
-//     SettingsStore.updateSettings({currentSettings, userId: user.id})
-//   }
-// }
-// fetchSavedSettings()
+fetchSavedSettings()
 
 const updateSavedSettings = async () => {
-  await settingsService.update(settings.value.id, settings)
+  settings  = SettingsStore.settings
+  await settingsService.update(settings.id, settings)
 }
 
 function promptCurrency() {
@@ -54,8 +61,8 @@ function promptCurrency() {
     persistent: true
   }).onOk(data => {
     console.log('>>>> OK, received', data)
-    SettingsStore.updateSettings({...settings.value, currency: data})
-    // updateSavedSettings();
+    SettingsStore.setCurrency(data)
+    updateSavedSettings();
   })
 }
 
@@ -75,8 +82,8 @@ function promptNDaysPerYear() {
     persistent: true
   }).onOk(data => {
     console.log('>>>> OK, received', data)
-    SettingsStore.updateSettings({...settings.value, daysPerYear: data})
-    // updateSavedSettings();
+    SettingsStore.setDaysPerYear(data)
+    updateSavedSettings();
   })
 }
 
@@ -93,8 +100,8 @@ function promptValueAddedTax() {
     persistent: true
   }).onOk(data => {
     console.log('>>>> OK, received', data)
-    SettingsStore.updateSettings({...settings.value, valueAddedTax: data})
-    // updateSavedSettings();
+    SettingsStore.setValueAddedTax(data)
+    updateSavedSettings();
   })
 }
 
@@ -111,8 +118,8 @@ function promptIncomeTax() {
     persistent: true
   }).onOk(data => {
     console.log('>>>> OK, received', data)
-    SettingsStore.updateSettings({...settings.value, incomeTax: data})
-    // updateSavedSettings();
+    SettingsStore.setIncomeTax(data)
+    updateSavedSettings();
   })
 }
 

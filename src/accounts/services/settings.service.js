@@ -2,17 +2,25 @@ import http from '@/core/services/http-common'
 export class SettingsService{
 
     async getByUserId(userId){
-        const response = await http.get(`users/${userId}/settings`)
-        if (response.status !== 200) return false;
-        return response;
+        try{
+            const response = await http.get(`users/${userId}/settings`)
+            if (response.status !== 200) return false;
+            return response;
+        }catch(err){
+            return false;
+        }
     }
 
-    create(data){
-        return http.post("users/settings", data);
+    async create(data){
+        try {
+            return await http.post("users/settings", data);
+        } catch (err) {
+            return false;
+        }
     }
 
     update(id, data){
-        return http.put(`user/settings/${id}`, data)
+        return http.put(`users/settings/${id}`, data)
     }
 
     //additional action (not neccesary)
