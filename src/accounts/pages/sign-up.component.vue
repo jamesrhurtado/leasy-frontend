@@ -37,7 +37,6 @@ const accept = ref(false)
 const handleRegister = async () => {
     const validData = validateData()
     if(authService.register(newUser) && validData){
-        await userService.register(newUser)
         router.push("/sign-in");
     }else{
         $q.notify({

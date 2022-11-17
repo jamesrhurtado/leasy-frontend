@@ -13,10 +13,15 @@ export class AuthService{
     }
 
     async login(user){
-        const response = await http.post(`users/sign-in`, user); 
-        if (response.status !== 200) return false;
-        const authStore = useAuthStore()
-        return authStore.login(response)
+        try {
+            const response = await http.post(`users/sign-in`, user);
+            const authStore = useAuthStore()
+            authStore.login(response.data)
+            if(response.status !== 200) return false;
+            return true;
+        } catch (err) {
+            return false;
+        }
     }
 
     getReports(id) {

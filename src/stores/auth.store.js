@@ -14,21 +14,10 @@ export const useAuthStore = defineStore({
     }),
     actions: {
         login(user) {
-            try {
-                if(user.token){
-                    this.user = {user}
-                    this.token = user.token
-                    // store user details and jwt in local storage to keep user logged in between page refreshes
-                    localStorage.setItem('user', JSON.stringify(user));
-                    return true
-                }else{
-                    console.log("Email or password is incorrect")
-                    return false
-                }  
-            } catch (error) {
-                console.log(error)  
-                return false        
-            }
+            this.user = {user}
+            this.token = user.token
+             // store user details and jwt in local storage to keep user logged in between page refreshes
+            localStorage.setItem('user', JSON.stringify(user));
         },
         logout() {
             this.user = null;

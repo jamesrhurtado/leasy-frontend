@@ -43,7 +43,9 @@ const validateData = () => {
 }
 const handleSubmit = async () => {
     const validData = validateData()
-    if(authService.login(user) && validData){
+    const status = await authService.login(user)
+    console.log(status)
+    if(status && validData){
         $q.notify({
             icon: 'done',
             color: 'positive',
