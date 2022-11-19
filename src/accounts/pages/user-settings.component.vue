@@ -9,11 +9,11 @@ import Footer from '@/components/footer.component.vue'
 
 
 const SettingsStore = useSettingsStore()
-// const settings  = computed(() => SettingsStore.settings);
+const reactiveSettings  = computed(() => SettingsStore.settings);
 let settings  = SettingsStore.settings
 
 const UserStore = useAuthStore()
-const user = UserStore.user
+const auth = UserStore.user
 const $q = useQuasar()
 const currency = ref("")
 const settingsService = new SettingsService()
@@ -21,19 +21,20 @@ const settingsService = new SettingsService()
 
 //fetching user settings from Backend
 const fetchSavedSettings = async () => {
-  const currentSettings = await settingsService.getByUserId(user.id)
-  console.log(user.id)
+  console.log(auth.user)
+  const currentSettings = await settingsService.getByUserId(auth.user.id)
+  console.log(auth.user.id)
   if(!currentSettings){
     console.log("didnt found data in db! creating...")
     //create settings with default values
     await settingsService.create(settings)
-    SettingsStore.setUserId(user.id)
+    SettingsStore.setUserId(auth.user.id)
   }else{
     console.log("found data in db! updating...")
     //update store with settings data got from Backend
     SettingsStore.updateSettings(currentSettings.data)
     SettingsStore.setId(currentSettings.data.id)
-    SettingsStore.setUserId(user.id)
+    SettingsStore.setUserId(auth.user.id)
   }
 }
 
@@ -132,22 +133,22 @@ function promptIncomeTax() {
             Configuraciones
         </div>
         <div class="grid grid-cols-2 justify-center">
-            <q-input class="p-4 m-2" outlined v-model="settings.currency" hint="Moneda" readonly />
+            <q-input class="p-4 m-2" outlined v-model="reactiveSettings.currency" hint="Moneda" readonly />
             <q-btn class="max-h-7 self-center max-w-[50%] justify-self-center" label="Editar" color="primary" @click="promptCurrency" />
         </div>
 
         <div class="grid grid-cols-2 justify-center">
-            <q-input class="p-4 m-2" outlined v-model="settings.daysPerYear" hint="Número de dias por año" readonly />
+            <q-input class="p-4 m-2" outlined v-model="reactiveSettings.daysPerYear" hint="Número de dias por año" readonly />
             <q-btn class="max-h-7 self-center max-w-[50%] justify-self-center" label="Editar" color="primary" @click="promptNDaysPerYear" />
         </div>
 
         <div class="grid grid-cols-2 justify-center">
-            <q-input class="p-4 m-2 mb-6" outlined v-model="settings.valueAddedTax" hint="Impuesto general a las ventas (IGV)" readonly />
+            <q-input class="p-4 m-2 mb-6" outlined v-model="reactiveSettings.valueAddedTax" hint="Impuesto general a las ventas (IGV)" readonly />
             <q-btn class="max-h-7 self-center max-w-[50%] justify-self-center" label="Editar" color="primary" @click="promptValueAddedTax" />
         </div>
 
         <div class="grid grid-cols-2 justify-center">
-            <q-input class="p-4 m-2 mb-6" outlined v-model="settings.incomeTax" hint="Impuesto general a la renta (IR)" readonly />
+            <q-input class="p-4 m-2 mb-6" outlined v-model="reactiveSettings.incomeTax" hint="Impuesto general a la renta (IR)" readonly />
             <q-btn class="max-h-7 self-center max-w-[50%] justify-self-center" label="Editar" color="primary" @click="promptIncomeTax" />
         </div>
     </div>
