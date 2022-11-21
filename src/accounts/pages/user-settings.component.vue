@@ -27,7 +27,11 @@ const fetchSavedSettings = async () => {
   if(!currentSettings){
     console.log("didnt found data in db! creating...")
     //create settings with default values
-    await settingsService.create(settings)
+    const storableSettings = JSON.parse(JSON.stringify(settings));
+    //CANNOT DELETE ID BECAUSE IT WILL DELETE IT FROM ALL THE APPLICATION 
+    delete storableSettings.id;
+    console.log({...storableSettings, userId: auth.user.id})
+    await settingsService.create({...storableSettings, userId: auth.user.id})
     SettingsStore.setUserId(auth.user.id)
   }else{
     console.log("found data in db! updating...")
