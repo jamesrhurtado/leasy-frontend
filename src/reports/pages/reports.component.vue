@@ -1,5 +1,6 @@
 <script>
 import { useQuasar } from 'quasar'
+import { onBeforeUnmount } from 'vue'
 import {ReportsService} from '@/reports/services/reports.service.js'
 import { useAuthStore } from '../../stores/auth.store.js';
 import Header from '@/components/header.component.vue'
@@ -8,6 +9,16 @@ export default{
     components: {
         Header,
         Footer
+    },
+    setup(){
+        const $q = useQuasar()
+        let timer
+        onBeforeUnmount(() => {
+            if (timer !== void 0) {
+            clearTimeout(timer)
+            $q.loading.hide()
+            }
+        })
     },
     data() {
         return{
@@ -25,7 +36,18 @@ export default{
             this.UserStore = useAuthStore()
             this.auth = this.UserStore.user
             this.reportsService = new ReportsService()
-            this.reportsService.getAllByUserId(this.auth.user.id).then(response => {  this.reports = response.data })}
+            this.showLoading()
+            this.reportsService.getAllByUserId(this.auth.user.id).then(response => {  this.reports = response.data })
+        },
+        showLoading: function () {
+            this.$q.loading.show({
+                message: 'Cargando sus reportes. Por favor espere...'
+            })
+            this.timer = setTimeout(() => {
+                this.$q.loading.hide()
+                this.timer = void 0
+            }, 2500)
+        },
     }
 }
 </script>
