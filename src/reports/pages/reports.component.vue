@@ -47,8 +47,8 @@ export default{
                 </q-banner>
             </div>
         </div>
-        <div v-for="report in reports" v-bind:key="report.id">
-            <div> Reporte numero: {{report.id}} </div>
+        <div v-for="report, index in reports" v-bind:key="report.id">
+            <div> Reporte numero: {{ index+1}} </div>
             <div class="q-gutter-md bg-slate-100 rounded-2xl">
                 <div class="grid grid-cols-2 gap-3">
                     <div>

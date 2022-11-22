@@ -6,7 +6,7 @@ import { useAuthStore } from '../../stores/auth.store.js';
 
 import Footer from '@/components/footer.component.vue'
 const UserStore = useAuthStore()
-const user = computed(() => UserStore.user)
+const auth = computed(() => UserStore.user)
 
 </script>
 
@@ -17,9 +17,9 @@ const user = computed(() => UserStore.user)
             <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
                 Mi perfil
             </div>
-            <q-input class="p-4 m-2" outlined v-model="user.name" hint="Nombre" readonly />
-            <q-input class="p-4 m-2" outlined v-model="user.lastName" hint="Apellidos" readonly />
-            <q-input class="p-4 m-2 mb-6" outlined v-model="user.email" hint="Correo Electronico" readonly />
+            <q-input class="p-4 m-2" outlined v-model="auth.user.name" hint="Nombre" readonly />
+            <q-input class="p-4 m-2" outlined v-model="auth.user.lastName" hint="Apellidos" readonly />
+            <q-input class="p-4 m-2 mb-6" outlined v-model="auth.user.email" hint="Correo Electronico" readonly />
         </div>
         <Footer />
 </template>
