@@ -1,68 +1,33 @@
-<script setup>
+<script>
 import { useQuasar } from 'quasar'
 import {ReportsService} from '@/reports/services/reports.service.js'
 import { useAuthStore } from '../../stores/auth.store.js';
-import { ref, onMounted } from 'vue'
 import Header from '@/components/header.component.vue'
 import Footer from '@/components/footer.component.vue'
-
-const UserStore = useAuthStore()
-const user = UserStore.user
-
-const $q = useQuasar()
-
-const reportsService = new ReportsService()
-let reports = []
-const fetchReports = async() => {
-    reports = await reportsService.getAllByUserId(user.id)
+export default{
+    components: {
+        Header,
+        Footer
+    },
+    data() {
+        return{
+            reports: [],
+            reportsService: null,
+            UserStore: null,
+            auth:null
+        }
+    },
+    created() {
+        this.fetchData()
+    },
+    methods: {
+        fetchData: function() {
+            this.UserStore = useAuthStore()
+            this.auth = this.UserStore.user
+            this.reportsService = new ReportsService()
+            this.reportsService.getAllByUserId(this.auth.user.id).then(response => {  this.reports = response.data })}
+    }
 }
-
-onMounted(() => {
-    fetchReports()
-})
-
-// reports = [
-//   {
-//     "id": 1,
-//     "assetPrice": 1000,
-//     "leasingYears": 3,
-//     "paymentFrequency": "string",
-//     "rateType": "string",
-//     "rateValue": 0,
-//     "rateFrequency": "string",
-//     "capitalization": "string",
-//     "buyback": 0,
-//     "notaryFees": 0,
-//     "registryFees": 0,
-//     "valuation": 0,
-//     "studyCommission": 0,
-//     "activationCommission": 0,
-//     "regularCommission": 0,
-//     "riskInsurance": 0,
-//     "rateKs": 0,
-//     "rateWacc": 0
-//   },
-//   {
-//     "id": 2,
-//     "assetPrice": 2000,
-//     "leasingYears": 6,
-//     "paymentFrequency": "string",
-//     "rateType": "string",
-//     "rateValue": 0,
-//     "rateFrequency": "string",
-//     "capitalization": "string",
-//     "buyback": 0,
-//     "notaryFees": 0,
-//     "registryFees": 0,
-//     "valuation": 0,
-//     "studyCommission": 0,
-//     "activationCommission": 0,
-//     "regularCommission": 0,
-//     "riskInsurance": 0,
-//     "rateKs": 0,
-//     "rateWacc": 0
-//   }
-// ]
 </script>
 
 <template>
@@ -82,9 +47,8 @@ onMounted(() => {
                 </q-banner>
             </div>
         </div>
-
-        <div v-for="report, index in reports" v-bind:key="report.id">
-            <div> Reporte numero: {{index + 1}}</div>
+        <div v-for="report in reports" v-bind:key="report.id">
+            <div> Reporte numero: {{report.id}} </div>
             <div class="q-gutter-md bg-slate-100 rounded-2xl">
                 <div class="grid grid-cols-2 gap-3">
                     <div>

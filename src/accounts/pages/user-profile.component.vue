@@ -3,6 +3,7 @@
 import Header from '@/components/header.component.vue'
 import { ref, computed } from 'vue'
 import { useAuthStore } from '../../stores/auth.store.js';
+
 import Footer from '@/components/footer.component.vue'
 const UserStore = useAuthStore()
 const user = computed(() => UserStore.user)

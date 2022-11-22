@@ -14,7 +14,7 @@ export class ReportsService{
     }
 
     create(data){
-        return http.post("reports", data);
+        return http.post("/reports", data);
     }
 
     update(id, data){

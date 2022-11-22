@@ -14,7 +14,7 @@ const SettingsStore = useSettingsStore()
 const settings  = SettingsStore.settings;
 
 const UserStore = useAuthStore()
-const user = UserStore.user
+const auth = UserStore.user
 
 //Template for table
 //Columns
@@ -89,8 +89,8 @@ const currentReport = reactive({
     activationCommission: "",
     regularCommission: "",
     riskInsurance: "",
-    ksRate: "",
-    waccRate: ""
+    rateKs: "",
+    rateWacc: ""
 })
 
 //stores the results to be displayed
@@ -162,7 +162,7 @@ const handleSubmit = async () => {
   console.log(showResults)
   validateInputFields()
   const storableData = loadData()
-  //await reportsApiService.create(storableData)
+  await reportsService.create(storableData)
   calculateLeasingResults(storableData)
   calculateTotalResults(storableData)
   calculateRecurringCosts(storableData)
@@ -175,14 +175,16 @@ const handleSubmit = async () => {
 
 //HELPER FUNCTIONS
 function loadData(){
+  console.log(currentReport.capitalization.value)
   const data = {
     assetPrice: roundDecimal((currentReport.assetPrice)),
     leasingYears: parseInt(currentReport.leasingYears),
     paymentFrequency: currentReport.paymentFrequency.value,
     rateType: currentReport.rateType.value,
-    rateFrequency: currentReport.rateFrequency.value,
-    capitalization: currentReport.capitalization.value,
     rateValue: roundPercentage(parseFloat(currentReport.rateValue)),
+    rateFrequency: currentReport.rateFrequency.value,
+    capitalization: currentReport.capitalization.value === undefined ? 
+    "null": currentReport.capitalization.value,
     buyback: roundPercentage((currentReport.buyback)),
     notaryFees: roundDecimal((currentReport.notaryFees)),
     registryFees: roundDecimal((currentReport.registryFees)),
@@ -191,8 +193,9 @@ function loadData(){
     activationCommission: roundDecimal((currentReport.activationCommission)),
     regularCommission: roundDecimal((currentReport.regularCommission)),
     riskInsurance: roundPercentage((currentReport.riskInsurance)),
-    ksRate: roundPercentage((currentReport.ksRate)),
-    waccRate: roundPercentage((currentReport.waccRate))
+    rateKs: roundPercentage((currentReport.rateKs)),
+    rateWacc: roundPercentage((currentReport.rateWacc)),
+    userId: auth.user.id
   }
   return data
 }
@@ -299,7 +302,7 @@ function generateSchedule(data){
   const partialGracePeriods = gracePeriods.partial.split(",")
   //VAN FLUJO BRUTO
   let grossFlowNpv = 0
-  let rateGrossFlowNpv = (Math.pow(1 + (data.ksRate)/100, getDaysPerFrequency(data.paymentFrequency)/DAYS_PER_YEAR ) - 1)
+  let rateGrossFlowNpv = (Math.pow(1 + (data.rateKs)/100, getDaysPerFrequency(data.paymentFrequency)/DAYS_PER_YEAR ) - 1)
   let grossFlowNpvPerQuota = 0
   let sumGrossFlowVpn = 0
   let quota = 0
@@ -308,7 +311,7 @@ function generateSchedule(data){
 
   //VAN FLUJO NETO
   let netFlowNpv = 0
-  let rateNetFlowNpv = (Math.pow(1 + (data.waccRate)/100, getDaysPerFrequency(data.paymentFrequency)/DAYS_PER_YEAR ) - 1)
+  let rateNetFlowNpv = (Math.pow(1 + (data.rateWacc)/100, getDaysPerFrequency(data.paymentFrequency)/DAYS_PER_YEAR ) - 1)
   let netFlowNpvPerQuota = 0
   let sumNetFlowVpn = 0
 
@@ -438,8 +441,8 @@ function onReset () {
                     </div>
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos del costo de oportunidad</div>
-                        <q-input class="p-2" outlined v-model="currentReport.ksRate " label="Tasa de descuento Ks" />
-                        <q-input class="p-2" outlined v-model="currentReport.waccRate" label="Tasa de descuento WACC" />
+                        <q-input class="p-2" outlined v-model="currentReport.rateKs " label="Tasa de descuento Ks" />
+                        <q-input class="p-2" outlined v-model="currentReport.rateWacc" label="Tasa de descuento WACC" />
                     </div>
                     <div>
                         <q-btn color="black" label="Calcular" type="submit" @click="showLoading"/>
