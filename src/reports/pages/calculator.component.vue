@@ -10,13 +10,17 @@ import Footer from '@/components/footer.component.vue'
 
 let timer
 
+//Stores
 const SettingsStore = useSettingsStore()
 const settings  = SettingsStore.settings;
 
 const UserStore = useAuthStore()
 const auth = UserStore.user
 
-//Template for table
+//Services
+const reportsService = new ReportsService()
+
+//Schedule for Leasing
 //Columns
 const columns = [
   { name: 'periodo', required: true, label: 'Número', align: 'center', field: 'periodo', format: val => `${val}`, sortable: true},
@@ -37,14 +41,12 @@ const columns = [
   { name: 'netFlow', label: 'Flujo neto', field: 'netFlow' },
 ]
 
-//Template for table
 //Rows
 const rows = reactive([])
 
+//UI config
 const $q = useQuasar()
-const name = ref(null)
-const reportsService = new ReportsService()
-//loading
+
 onBeforeUnmount(() => {
   if (timer !== void 0) {
     clearTimeout(timer)
@@ -72,6 +74,9 @@ function showLoading () {
     }, 2000)
   }, 2000)
 }
+
+const name = ref(null)
+
 //stores data to save report
 const currentReport = reactive({
     assetPrice: "",
@@ -119,12 +124,13 @@ const gracePeriods = reactive({
   partial: null
 })
 
+//Const values from User Settings
+
 const VAT = (settings.valueAddedTax)/100
 const INCOME_TAX = (settings.incomeTax)/100
 const DAYS_PER_YEAR = settings.daysPerYear
 
 let showResults = false;
-
 const accept = ref(false)
 
 //options for dropdown fields
@@ -144,30 +150,125 @@ const periodicals = [
   {label: 'Anual', value: 'yearly'}
 ]
 
+
+const moneyRef = ref(null)
+const percentageRef = ref(null)
+const frequencyRef = ref(null)
+const timeRef = ref(null)
+const rateRef = ref(null)
+const gracePeriodsRef = ref(null)
+const moneyRules = [
+  val => (val !== null && val !== '') || 'Este dato es requerido. Si es opcional, ingrese 0.',
+  val => (val >= 0) || 'El valor ingresado no es válido.'  
+]
+
+const percentageRules = [
+  val => (val !== null && val !== '') || 'Este dato es requerido. Si es opcional, ingrese 0.',
+  val => (val >= 0) || 'El valor ingresado no es válido.'  
+]
+
+const frequencyRules = [
+  val => (val !== null && val !== '') || 'Este dato es requerido.'
+]
+
+const timeRules = [
+  val => (val !== null && val !== '') || 'Este dato es requerido.',
+  val => (val > 0) || 'El valor ingresado no es válido.'  
+]
+
+const rateRules = [
+  val => (val !== null && val !== '') || 'Este dato es requerido. Si no lo considera, ingrese 0',
+  val => (val > 0) || 'El valor ingresado no es válido.'  
+]
+
+const gracePeriodsRules = [
+  val => (val !== null && val !== '') || 'Este dato es requerido. Ingreselo como x, y, z. Si no lo considera, ingrese 0'
+]
+
 //ADD function to validate fields
 function validateInputFields(){
+  let valid = false
 //cannot be grace period in last period
-}
+  moneyRef.value.validate()
+  percentageRef.value.validate()
+  frequencyRef.value.validate()
+  timeRef.value.validate()
+  rateRef.value.validate()
+  gracePeriodsRef.value.validate()
 
-
-function showText(){
-  console.log(showResults)
-  showResults = !showResults
-  console.log(showResults)
+  if(moneyRef.value.hasError){
+    $q.notify({
+      color: 'negative',
+      message: 'Hubo un problema con un valor de dinero. Verifique sus datos.',
+      actions: [
+        { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+      ]  
+    })
+  }else if(percentageRef.value.hasError){
+    $q.notify({
+      color: 'negative',
+      message: 'Hubo un problema con un valor de porcentaje. Verifique sus datos.',
+      actions: [
+        { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+      ]  
+    })
+  }else if(frequencyRef.value.hasError){
+    $q.notify({
+      color: 'negative',
+      message: 'Hubo un problema con alguna frecuencia ingresada. Verifique sus datos.',
+      actions: [
+        { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+      ]  
+    })
+  }else if(timeRef.value.hasError){
+    $q.notify({
+      color: 'negative',
+      message: 'Hubo un problema con algun valor relacionado al tiempo. Verifique sus datos.',
+      actions: [
+        { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+      ]  
+    })
+  }else if(rateRef.value.hasError){
+    $q.notify({
+      color: 'negative',
+      message: 'Hubo un problema con algun valor relacionado a tasas. Verifique sus datos.',
+      actions: [
+        { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+      ]  
+    })
+  }else if(gracePeriodsRef.value.hasError){
+    $q.notify({
+      color: 'negative',
+      message: 'Hubo un problema con los periodos de gracia. Verifique sus datos.',
+      actions: [
+        { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+      ]  
+    })
+  }else{
+    valid = true
+  }
+  return valid
 }
 
 const handleSubmit = async () => {
-  console.log(showResults)
-  showResults = true;
-  console.log(showResults)
-  validateInputFields()
-  const storableData = loadData()
-  await reportsService.create(storableData)
-  calculateLeasingResults(storableData)
-  calculateTotalResults(storableData)
-  calculateRecurringCosts(storableData)
-  calculateProfitabilityIndicators(storableData)
-  generateSchedule(storableData)
+  const validData = validateInputFields()
+  if(validData){
+    const storableData = loadData()
+    await reportsService.create(storableData)
+    calculateLeasingResults(storableData)
+    calculateTotalResults(storableData)
+    calculateRecurringCosts(storableData)
+    calculateProfitabilityIndicators(storableData)
+    generateSchedule(storableData)
+  }else{
+    $q.notify({
+      color: 'negative',
+      message: 'Hubo un error con los datos ingresados. Verifique nuevamente.',
+      actions: [
+        { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+      ]  
+    })
+  }
 }
 
 //returns the data in a storable type (string-> number)
@@ -446,34 +547,34 @@ function onReset () {
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos del prestamo</div>
-                        <q-input class="p-2" outlined v-model="currentReport.assetPrice" type="number" label="Precio de venta del activo" />
-                        <q-input class="p-2" outlined v-model="currentReport.leasingYears" type="number" label="Número de años" />
-                        <q-select class="p-2" outlined v-model="currentReport.paymentFrequency" :options="periodicals" label="Frecuencia de pago" />
-                        <q-select class="p-2" outlined v-model="currentReport.rateType" :options="rateOptions" label="Tipo de tasa de interés" />
-                        <q-select class="p-2" outlined v-model="currentReport.rateFrequency" :options="periodicals" label="Frecuencia de tasa" />
+                        <q-input class="p-2" ref = "moneyRef" outlined v-model="currentReport.assetPrice" type="number" label="Precio de venta del activo" :rules="moneyRules" />
+                        <q-input class="p-2" ref = "timeRef" outlined v-model="currentReport.leasingYears" type="number" label="Número de años" :rules="timeRules" />
+                        <q-select class="p-2" ref = "frequencyRef" outlined v-model="currentReport.paymentFrequency" :options="periodicals" label="Frecuencia de pago" :rules="frequencyRules"/>
+                        <q-select class="p-2" ref = "rateRef" outlined v-model="currentReport.rateType" :options="rateOptions" label="Tipo de tasa de interés" :rules="frequencyRules"/>
+                        <q-select class="p-2" ref = "frequencyRef" outlined v-model="currentReport.rateFrequency" :options="periodicals" label="Frecuencia de tasa" :rules="frequencyRules"/>
                         <q-select v-show="currentReport.rateType.value !== 'effective'" class="p-2" outlined v-model="currentReport.capitalization" :options="periodicals" label="Capitalización" />
-                        <q-input class="p-2" outlined v-model="currentReport.rateValue" type="number" label="Porcentaje de tasa" />
-                        <q-input class="p-2" outlined use-chips v-model="currentReport.buyback" label="Porcentaje de recompra" />
+                        <q-input class="p-2" ref = "percentageRef" outlined v-model="currentReport.rateValue" type="number" label="Porcentaje de tasa" :rules="percentageRules"/>
+                        <q-input class="p-2" ref = "percentageRef" outlined use-chips v-model="currentReport.buyback" label="Porcentaje de recompra" :rules="percentageRules"/>
                     </div>
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos de costes/gastos iniciales</div>
-                        <q-input class="p-2" outlined v-model="currentReport.notaryFees" type="number" label="Costes notariales" />
-                        <q-input class="p-2" outlined v-model="currentReport.registryFees" type="number" label="Costes registrales" />
-                        <q-input class="p-2" outlined v-model="currentReport.valuation" type="number" label="Tasación" />
-                        <q-input class="p-2" outlined v-model="currentReport.studyCommission" type="number" label="Comisión de estudio" />
-                        <q-input class="p-2" outlined v-model="currentReport.activationCommission" type="number" label="Comisión de activación" />
-                        <q-input class="p-2" outlined v-model="gracePeriods.total" label="Periodos de Gracia Totales" />
-                        <q-input class="p-2" outlined v-model="gracePeriods.partial" label="Periodos de Gracia Parciales" />
+                        <q-input class="p-2" ref = "moneyRef" outlined v-model="currentReport.notaryFees" type="number" label="Costes notariales"  :rules="moneyRules" />
+                        <q-input class="p-2" ref = "moneyRef" outlined v-model="currentReport.registryFees" type="number" label="Costes registrales"  :rules="moneyRules" />
+                        <q-input class="p-2" ref = "moneyRef" outlined v-model="currentReport.valuation" type="number" label="Tasación"  :rules="moneyRules" />
+                        <q-input class="p-2" ref = "moneyRef" outlined v-model="currentReport.studyCommission" type="number" label="Comisión de estudio"  :rules="moneyRules" />
+                        <q-input class="p-2" ref = "moneyRef" outlined v-model="currentReport.activationCommission" type="number" label="Comisión de activación"  :rules="moneyRules" />
+                        <q-input class="p-2" ref = "gracePeriodsRef" outlined v-model="gracePeriods.total" label="Periodos de Gracia Totales"  :rules="gracePeriodsRules" />
+                        <q-input class="p-2" ref = "gracePeriodsRef" outlined v-model="gracePeriods.partial" label="Periodos de Gracia Parciales" :rules="gracePeriodsRules"/>
                     </div>
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos de costes/gastos periódicos</div>
-                        <q-input class="p-2" outlined v-model="currentReport.regularCommission" type="number" label="Comisión periódica" />
-                        <q-input class="p-2" outlined v-model="currentReport.riskInsurance" label="Porcentaje de seguro de riesgo" />
+                        <q-input class="p-2" ref = "moneyRef" outlined v-model="currentReport.regularCommission" type="number" label="Comisión periódica" :rules="moneyRules"/>
+                        <q-input class="p-2" ref = "percentageRef" outlined v-model="currentReport.riskInsurance" label="Porcentaje de seguro de riesgo" :rules="percentageRules" />
                     </div>
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Datos del costo de oportunidad</div>
-                        <q-input class="p-2" outlined v-model="currentReport.rateKs " label="Tasa de descuento Ks" />
-                        <q-input class="p-2" outlined v-model="currentReport.rateWacc" label="Tasa de descuento WACC" />
+                        <q-input class="p-2" ref = "percentageRef" outlined v-model="currentReport.rateKs " label="Tasa de descuento Ks" :rules="percentageRules" />
+                        <q-input class="p-2" ref = "percentageRef" outlined v-model="currentReport.rateWacc" label="Tasa de descuento WACC" :rules="percentageRules" />
                     </div>
                     <div>
                         <q-btn color="black" label="Calcular" type="submit" @click="showLoading"/>
