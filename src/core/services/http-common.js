@@ -1,6 +1,6 @@
 import axios from "axios";
 const http = axios.create({
-  baseURL: "http://localhost:3000/",
+  baseURL: "https://leasyupc.azurewebsites.net/api/v1/",
   headers: { "Content-type": "application/json" },
 });
 

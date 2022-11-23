@@ -1,8 +1,12 @@
 import http from '@/core/services/http-common';
 
-export class ReportsApiService{
+export class ReportsService{
     getAll(){
         return http.get("/reports")
+    }
+
+    getAllByUserId(userId){
+        return http.get(`users/${userId}/reports`)
     }
 
     getById(id){
@@ -10,7 +14,7 @@ export class ReportsApiService{
     }
 
     create(data){
-        return http.post("reports", data);
+        return http.post("/reports", data);
     }
 
     update(id, data){

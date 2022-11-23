@@ -1,27 +1,30 @@
 <script setup>
+
 import { useQuasar } from 'quasar'
 import { ref, reactive } from 'vue'
-import {UsersService} from '../services/users.service'
 import { useRouter, RouterLink } from "vue-router";
-import { useAuthStore } from '../../stores/auth.store.js';
-
+import { AuthService } from '../services/auth.service';
+import AuthHeader from '@/components/auth-header.component.vue'
+import Footer from '@/components/footer.component.vue'
 
 const $q = useQuasar()
-const userService = new UsersService()
+const authService = new AuthService()
 const router = useRouter();
 const user = reactive({
     email: "",
     password: ""
 })
 
+//validation settings
 const email = ref(null)
 const emailRef = ref(null)
 
 const password = ref(null)
 const passwordRef = ref(null)
 const isPwd = ref(true)
-const emailRules = [val => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(val)) || 'Por favor, ingrese un correo valido']
 
+//validation rules
+const emailRules = [val => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(val)) || 'Por favor, ingrese un correo valido']
 const passwordRules = [val => (val && val.length > 0) || 'Este campo es obligatorio']
 
 const validateData = () => {
@@ -41,22 +44,34 @@ const validateData = () => {
     }
     return valid
 }
+
 const handleSubmit = async () => {
-    let authUser;
-    const authStore = useAuthStore()
-    const success = validateData()
-    if(success){
-        authUser = await authStore.login(user)
-        if(authUser){
-            router.push("/calculator")
-        }
+    const validData = validateData()
+    const status = await authService.login(user)
+    if(status && validData){
+        $q.notify({
+            icon: 'done',
+            color: 'positive',
+            message: 'Usuario autenticado.',
+            actions: [{ label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }]
+        })
+        router.push("/calculator")
+    }else{
+        $q.notify({
+            color: 'negative',
+            message: 'Los datos ingresados no coinciden. Verifique sus datos.',
+            actions: [
+                { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+            ]  
+        })
     }
 }
 
 </script>
 
 <template>
-    <div class="grid shadow-md w-96 h-auto m-auto my-6 font-dm-sans-regular">
+    <AuthHeader />
+    <div class="grid shadow-md w-96 h-auto m-auto my-6 font-dm-sans-regular pt-4 mt-24">
         <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
             Iniciar Sesión
         </div>
@@ -97,6 +112,7 @@ const handleSubmit = async () => {
         </RouterLink>
         </div>
     </div>
+    <Footer />
 </template>
 <style>
 
