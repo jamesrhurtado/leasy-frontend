@@ -8,7 +8,6 @@ import { onBeforeUnmount } from 'vue'
 import Header from '@/components/header.component.vue'
 import Footer from '@/components/footer.component.vue'
 
-
 //Stores
 const SettingsStore = useSettingsStore()
 const settings  = SettingsStore.settings;
@@ -195,19 +194,14 @@ const gracePeriodsRules = [
 function validateGracePeriods(){
   totalGracePeriods = gracePeriods.total.split(",").map(Number)
   partialGracePeriods = gracePeriods.partial.split(",").map(Number)
-
-  //cannot be grace period in last period
+  //cannot exist grace period in last period
   let lastPeriod = parseInt(currentReport.leasingYears) * DAYS_PER_YEAR / getDaysPerFrequency(currentReport.paymentFrequency.value)
-  console.log(lastPeriod)
-  console.log(currentReport.paymentFrequency.value)
-  console.log(getDaysPerFrequency(currentReport.paymentFrequency.value))
 
   if(totalGracePeriods.includes(lastPeriod) || partialGracePeriods.includes(lastPeriod)){
     return false;
   }
   return true
 }
-
 
 function validateInputFields(){
   let valid = false
@@ -218,6 +212,7 @@ function validateInputFields(){
   rateRef.value.validate()
   gracePeriodsRef.value.validate()
 
+  //Customised dialogs for Validation
   if(moneyRef.value.hasError){
     $q.notify({
       color: 'negative',
@@ -281,10 +276,14 @@ function validateInputFields(){
 }
 
 const handleSubmit = async () => {
+  console.log(VAT)
+  console.log(INCOME_TAX)
+  console.log(DAYS_PER_YEAR)
   const validData = validateInputFields()
   if(validData){
     showLoading()
     const storableData = loadData()
+    //Creates Report in Database
     await reportsService.create(storableData)
     calculateLeasingResults(storableData)
     calculateTotalResults(storableData)
@@ -302,9 +301,9 @@ const handleSubmit = async () => {
   }
 }
 
-//returns the data in a storable type (string-> number)
-
 //HELPER FUNCTIONS
+
+//returns the data in a storable type (string-> number)
 function loadData(){
   const data = {
     assetPrice: roundDecimal((currentReport.assetPrice)),
@@ -329,6 +328,7 @@ function loadData(){
   }
   return data
 }
+//rounds numbers given
 
 function roundDecimal(x){
   return +parseFloat(x).toFixed(2)
@@ -366,8 +366,9 @@ function calculateRate(data){
   const paymentFrequencyDays = getDaysPerFrequency(data.paymentFrequency)
   const rateFrequencyDays = getDaysPerFrequency(data.rateFrequency)
   if(data.rateType === 'nominal'){
-    const m = (rateFrequencyDays)/(data.capitalization)
-    const n = paymentFrequencyDays/(data.capitalization)
+    const capitalizationFrequency = getDaysPerFrequency(data.capitalization)
+    const m = (rateFrequencyDays)/(capitalizationFrequency)
+    const n = paymentFrequencyDays/(capitalizationFrequency)
     reportResults.periodEffectiveRate = calculatePeriodEffectiveRateWithNominalRate(data.rateValue, n, m)
   }else if(data.rateType === 'effective'){
     reportResults.periodEffectiveRate = calculatePeriodEffectiveRateWithEffectiveRate(data.rateValue, paymentFrequencyDays, rateFrequencyDays)
@@ -377,15 +378,30 @@ function calculateRate(data){
 }
 
 //CALCULATING TEP
+
+//Nominal Rate
 function calculatePeriodEffectiveRateWithNominalRate(rateValue, n, m){
   let rate = roundPercentage((Math.pow(1 + ((rateValue/100)/ m), n)-1)*100)
   return rate
 }
 
+//Effective Rate
 function calculatePeriodEffectiveRateWithEffectiveRate(rateValue, paymentFrequencyDays, rateFrequencyDays){
   let rate = roundPercentage((Math.pow(1 + (rateValue/100), (paymentFrequencyDays/rateFrequencyDays)) - 1) * 100)
   return rate
 }
+
+function round(number, decimals = 0) {
+    let strNum = '' + number;
+    let negCoef = number < 0 ? -1 : 1;
+    let dotIndex = strNum.indexOf('.');
+    let start = dotIndex + decimals + 1;
+    let dec = Number.parseInt(strNum.substring(start, start + 1));
+    let remainder = dec >= 5 ? 1 / Math.pow(10, decimals) : 0;
+    let result = Number.parseFloat(strNum.substring(0, start)) + remainder * negCoef;
+    return result.toFixed(decimals);
+}
+
 
 function calculateLeasingResults(data){
   const paymentFrequencyDays = getDaysPerFrequency(data.paymentFrequency)
@@ -393,8 +409,8 @@ function calculateLeasingResults(data){
   reportResults.assetValue = roundDecimal(data.assetPrice - reportResults.ivaValue)
   reportResults.leasingValue = roundDecimal(reportResults.assetValue + data.notaryFees + data.registryFees + data.valuation + data.studyCommission + data.activationCommission)
   calculateRate(data)
-  reportResults.quotasPerYear = DAYS_PER_YEAR/paymentFrequencyDays
-  reportResults.totalQuotas = data.leasingYears * reportResults.quotasPerYear
+  reportResults.quotasPerYear = Math.round((DAYS_PER_YEAR/paymentFrequencyDays))
+  reportResults.totalQuotas = Math.round(data.leasingYears * reportResults.quotasPerYear) 
 }
 
 function calculateTotalResults(data){
@@ -443,14 +459,13 @@ function generateSchedule(data){
   let netFlowNpvPerQuota = 0
   let sumNetFlowVpn = 0
 
-  //COLLECTIONS
+  //COLLECTIONS FOR TIR, TCEA
   let grossFlowCollection = [(-reportResults.leasingValue)]
   let netFlowCollection = [(-reportResults.leasingValue)]
 
   for(let i=1; i <= reportResults.totalQuotas; i++){
     interest = (initialValue * (reportResults.periodEffectiveRate/100))
     totalInterest = totalInterest + interest
-    //contador para sumar seguro riesgo
     totalRiskInsurance += reportResults.riskInsuranceValue
     let taxSaving = (interest + reportResults.riskInsuranceValue + data.regularCommission + depreciation)*INCOME_TAX
     
@@ -475,7 +490,7 @@ function generateSchedule(data){
   
     if(i === reportResults.totalQuotas){
       buyback = (reportResults.assetValue * (data.buyback/100))
-      reportResults.buybackValue = buyback
+      reportResults.buybackValue = roundDecimal(buyback)
       grossFlow = quota + reportResults.riskInsuranceValue + data.regularCommission + buyback
       ivaQuota = grossFlow * VAT
       ivaFlow = (grossFlow + ivaQuota)
@@ -545,17 +560,10 @@ function generateSchedule(data){
     return IRR * 100;
   }
 
-  console.log("before irr g f")
   reportResults.irrGrossFlow = roundPercentage(calculateIRR(grossFlowCollection))
-  console.log("before irr n f")
   reportResults.irrNetFlow = roundPercentage(calculateIRR(netFlowCollection))
-
-  console.log("before n f ear")
   reportResults.netFlowEar = roundPercentage((Math.pow(1 + (reportResults.irrNetFlow)/100, DAYS_PER_YEAR/getDaysPerFrequency(data.paymentFrequency))-1)*100)
-
-  console.log("before g f ear")
   reportResults.grossFlowEar = roundPercentage((Math.pow(1 + (reportResults.irrGrossFlow)/100, DAYS_PER_YEAR/getDaysPerFrequency(data.paymentFrequency))-1)*100)
-  console.log("the othres....")
   reportResults.totalInterest = roundDecimal(totalInterest)
   reportResults.totalRepayment = roundDecimal(totalRepayment)
   reportResults.totalRiskInsurance = roundDecimal(totalRiskInsurance)
