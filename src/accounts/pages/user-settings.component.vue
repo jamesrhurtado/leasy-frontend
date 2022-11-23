@@ -1,9 +1,7 @@
 <script setup>
 import { useQuasar } from 'quasar'
 import { ref, computed } from 'vue'
-import { onBeforeMount, onBeforeUnmount } from 'vue'
-import { useRouter } from "vue-router";
-import {SettingsService} from '@/accounts/services/settings.service.js'
+import { SettingsService } from '@/accounts/services/settings.service.js'
 import { useSettingsStore } from '../../stores/settings.store.js';
 import { useAuthStore } from '../../stores/auth.store.js';
 import Header from '@/components/header.component.vue'
@@ -24,20 +22,14 @@ const settingsService = new SettingsService()
 
 //fetching user settings from Backend
 const fetchSavedSettings = async () => {
-  console.log(auth.user)
   const currentSettings = await settingsService.getByUserId(auth.user.id)
-  console.log(auth.user.id)
   if(!currentSettings){
-    console.log("didnt found data in db! creating...")
     //create settings with default values
     const storableSettings = JSON.parse(JSON.stringify(settings));
-    //CANNOT DELETE ID BECAUSE IT WILL DELETE IT FROM ALL THE APPLICATION 
     delete storableSettings.id;
-    console.log({...storableSettings, userId: auth.user.id})
     await settingsService.create({...storableSettings, userId: auth.user.id})
     SettingsStore.setUserId(auth.user.id)
   }else{
-    console.log("found data in db! updating...")
     //update store with settings data got from Backend
     SettingsStore.updateSettings(currentSettings.data)
     SettingsStore.setId(currentSettings.data.id)
@@ -68,7 +60,6 @@ function promptCurrency() {
     cancel: true,
     persistent: true
   }).onOk(data => {
-    console.log('>>>> OK, received', data)
     SettingsStore.setCurrency(data)
     updateSavedSettings();
   })
@@ -89,7 +80,6 @@ function promptNDaysPerYear() {
     cancel: true,
     persistent: true
   }).onOk(data => {
-    console.log('>>>> OK, received', data)
     SettingsStore.setDaysPerYear(data)
     updateSavedSettings();
   })
@@ -107,7 +97,6 @@ function promptValueAddedTax() {
     cancel: true,
     persistent: true
   }).onOk(data => {
-    console.log('>>>> OK, received', data)
     SettingsStore.setValueAddedTax(data)
     updateSavedSettings();
   })
@@ -125,7 +114,6 @@ function promptIncomeTax() {
     cancel: true,
     persistent: true
   }).onOk(data => {
-    console.log('>>>> OK, received', data)
     SettingsStore.setIncomeTax(data)
     updateSavedSettings();
   })
