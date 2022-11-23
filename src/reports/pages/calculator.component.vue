@@ -8,7 +8,6 @@ import { onBeforeUnmount } from 'vue'
 import Header from '@/components/header.component.vue'
 import Footer from '@/components/footer.component.vue'
 
-let timer
 
 //Stores
 const SettingsStore = useSettingsStore()
@@ -46,6 +45,7 @@ const rows = reactive([])
 
 //UI config
 const $q = useQuasar()
+let timer
 
 onBeforeUnmount(() => {
   if (timer !== void 0) {
@@ -256,6 +256,7 @@ function validateInputFields(){
 const handleSubmit = async () => {
   const validData = validateInputFields()
   if(validData){
+    showLoading()
     const storableData = loadData()
     console.log("saving")
     await reportsService.create(storableData)
@@ -384,7 +385,7 @@ function calculateRecurringCosts(data){
 }
 
 function calculateRiskInsuranceValue(riskInsurance, assetPrice, quotasPerYear){
-  let value = (riskInsurance/100 * assetPrice)/ quotasPerYear
+  let value = roundDecimal((riskInsurance/100 * assetPrice)/ quotasPerYear)
   return value
 }
 
@@ -406,8 +407,8 @@ function generateSchedule(data){
   let depreciation = (reportResults.assetValue / reportResults.totalQuotas)
   //recompra
   let buyback = 0
-  const totalGracePeriods = gracePeriods.total.split(",")
-  const partialGracePeriods = gracePeriods.partial.split(",")
+  const totalGracePeriods = gracePeriods.total.split(",").map(Number)
+  const partialGracePeriods = gracePeriods.partial.split(",").map(Number)
   //VAN FLUJO BRUTO
   let grossFlowNpv = 0
   let rateGrossFlowNpv = (Math.pow(1 + (data.rateKs)/100, getDaysPerFrequency(data.paymentFrequency)/DAYS_PER_YEAR ) - 1)
@@ -434,12 +435,18 @@ function generateSchedule(data){
     totalRiskInsurance += reportResults.riskInsuranceValue
     let taxSaving = (interest + reportResults.riskInsuranceValue + data.regularCommission + depreciation)*INCOME_TAX
     
-    if(totalGracePeriods.includes(i.toString())){
+    if(totalGracePeriods.includes(i)){
+      console.log("WE HAVE A TOTAL")
+      console.log(i.toString())
+      console.log(totalGracePeriods)
       repayment = 0
       quota = 0
       finalValue = initialValue + interest
       gp = 'T'
-    }else if(partialGracePeriods.includes(i.toString())){
+    }else if(partialGracePeriods.includes(i)){
+      console.log("WE HAVE A partial")
+      console.log(i.toString())
+      console.log(partialGracePeriods)
       repayment = 0
       quota = interest
       finalValue = initialValue
@@ -595,7 +602,7 @@ function onReset () {
                         <q-input class="p-2" ref = "percentageRef" outlined v-model="currentReport.rateWacc" label="Tasa de descuento WACC" :rules="percentageRules" />
                     </div>
                     <div>
-                        <q-btn color="black" label="Calcular" type="submit" @click="showLoading"/>
+                        <q-btn color="black" label="Calcular" type="submit"/>
                     </div>
                     <div>
                         <q-btn color="red" label="Limpiar" />
