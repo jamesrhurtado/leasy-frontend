@@ -168,14 +168,12 @@ const handleSubmit = async () => {
   calculateRecurringCosts(storableData)
   calculateProfitabilityIndicators(storableData)
   generateSchedule(storableData)
-  console.log(rows.value)
 }
 
 //returns the data in a storable type (string-> number)
 
 //HELPER FUNCTIONS
 function loadData(){
-  console.log(currentReport.capitalization.value)
   const data = {
     assetPrice: roundDecimal((currentReport.assetPrice)),
     leasingYears: parseInt(currentReport.leasingYears),
@@ -315,6 +313,10 @@ function generateSchedule(data){
   let netFlowNpvPerQuota = 0
   let sumNetFlowVpn = 0
 
+  //COLLECTIONS
+  let grossFlowCollection = [(-reportResults.leasingValue)]
+  let netFlowCollection = [(-reportResults.leasingValue)]
+
   for(let i=1; i <= reportResults.totalQuotas; i++){
     interest = (initialValue * (reportResults.periodEffectiveRate/100))
     totalInterest = totalInterest + interest
@@ -366,6 +368,9 @@ function generateSchedule(data){
     sumNetFlowVpn = sumNetFlowVpn + netFlowNpvPerQuota
     netFlowNpvPerQuota = 0
 
+    grossFlowCollection.push(roundDecimal(grossFlow))
+    netFlowCollection.push(roundDecimal(netFlow))
+
     rows.push({
       periodo: i,
       gp: gp,
@@ -386,6 +391,32 @@ function generateSchedule(data){
     })
     initialValue = finalValue
   }
+  
+  let IRR = 0
+  let NPV = 0
+
+  function calculateIRR(flows) {
+    let min = 0.0;
+    let max = 1.0;
+    do {
+      IRR = (min + max) / 2;
+      NPV = 0;
+      for (let j=0; j<flows.length; j++) {
+        NPV += flows[j] / Math.pow((1+IRR),j);
+      }
+      if (NPV > 0) {
+        min = IRR;
+      }
+      else {
+        max = IRR;
+      }
+    } while(Math.abs(NPV) > 0.000001);
+    return IRR * 100;
+    }
+
+  console.log(roundPercentage(calculateIRR(grossFlowCollection)))
+let tceaGross = roundPercentage((Math.pow(1 + calculateIRR(grossFlowCollection), DAYS_PER_YEAR/getDaysPerFrequency(data.paymentFrequency))-1) * 100)
+console.log(tceaGross)
   reportResults.totalInterest = roundDecimal(totalInterest)
   reportResults.totalRepayment = roundDecimal(totalRepayment)
   reportResults.totalRiskInsurance = roundDecimal(totalRiskInsurance)
