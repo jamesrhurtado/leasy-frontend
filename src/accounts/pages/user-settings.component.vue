@@ -7,7 +7,7 @@ import { useAuthStore } from '../../stores/auth.store.js';
 import Header from '@/components/header.component.vue'
 import Footer from '@/components/footer.component.vue'
 
-
+//Stores (State Management)
 const SettingsStore = useSettingsStore()
 const reactiveSettings  = computed(() => SettingsStore.settings);
 let settings  = SettingsStore.settings
@@ -15,8 +15,11 @@ let settings  = SettingsStore.settings
 const UserStore = useAuthStore()
 const auth = UserStore.user
 
+//Additional config
 const $q = useQuasar()
 const currency = ref("")
+
+//Backend
 const settingsService = new SettingsService()
 
 
@@ -37,6 +40,7 @@ const fetchSavedSettings = async () => {
   }
 }
 
+//created()
 fetchSavedSettings()
 
 const updateSavedSettings = async () => {
@@ -148,7 +152,6 @@ function promptIncomeTax() {
         </div>
     </div>
     <Footer />
-    
 </template>
 
 
