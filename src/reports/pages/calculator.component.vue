@@ -132,7 +132,6 @@ const VAT = (settings.valueAddedTax)/100
 const INCOME_TAX = (settings.incomeTax)/100
 const DAYS_PER_YEAR = settings.daysPerYear
 
-let showResults = false;
 const accept = ref(false)
 
 //options for dropdown fields
@@ -159,6 +158,10 @@ const frequencyRef = ref(null)
 const timeRef = ref(null)
 const rateRef = ref(null)
 const gracePeriodsRef = ref(null)
+
+//Additional data
+let totalGracePeriods = []
+let partialGracePeriods = []
 
 //Rules for Validation
 const moneyRules = [
@@ -189,9 +192,25 @@ const gracePeriodsRules = [
   val => (val !== null && val !== '') || 'Este dato es requerido. Ingreselo como x, y, z. Si no lo considera, ingrese 0'
 ]
 
+function validateGracePeriods(){
+  totalGracePeriods = gracePeriods.total.split(",").map(Number)
+  partialGracePeriods = gracePeriods.partial.split(",").map(Number)
+
+  //cannot be grace period in last period
+  let lastPeriod = parseInt(currentReport.leasingYears) * DAYS_PER_YEAR / getDaysPerFrequency(currentReport.paymentFrequency.value)
+  console.log(lastPeriod)
+  console.log(currentReport.paymentFrequency.value)
+  console.log(getDaysPerFrequency(currentReport.paymentFrequency.value))
+
+  if(totalGracePeriods.includes(lastPeriod) || partialGracePeriods.includes(lastPeriod)){
+    return false;
+  }
+  return true
+}
+
+
 function validateInputFields(){
   let valid = false
-//cannot be grace period in last period
   moneyRef.value.validate()
   percentageRef.value.validate()
   frequencyRef.value.validate()
@@ -247,6 +266,14 @@ function validateInputFields(){
         { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
       ]  
     })
+  }else if(!validateGracePeriods()){
+    $q.notify({
+      color: 'negative',
+      message: 'Un periodo de gracia de tipo T o P no puede ser dado en el ultimo periodo.',
+      actions: [
+        { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+      ]  
+    })
   }else{
     valid = true
   }
@@ -258,17 +285,11 @@ const handleSubmit = async () => {
   if(validData){
     showLoading()
     const storableData = loadData()
-    console.log("saving")
     await reportsService.create(storableData)
-    console.log("leasing r")
     calculateLeasingResults(storableData)
-    console.log("total...")
     calculateTotalResults(storableData)
-    console.log("recurring")
     calculateRecurringCosts(storableData)
-    console.log("profitab")
     calculateProfitabilityIndicators(storableData)
-    console.log("schedulee...")
     generateSchedule(storableData)
   }else{
     $q.notify({
@@ -407,8 +428,6 @@ function generateSchedule(data){
   let depreciation = (reportResults.assetValue / reportResults.totalQuotas)
   //recompra
   let buyback = 0
-  const totalGracePeriods = gracePeriods.total.split(",").map(Number)
-  const partialGracePeriods = gracePeriods.partial.split(",").map(Number)
   //VAN FLUJO BRUTO
   let grossFlowNpv = 0
   let rateGrossFlowNpv = (Math.pow(1 + (data.rateKs)/100, getDaysPerFrequency(data.paymentFrequency)/DAYS_PER_YEAR ) - 1)
@@ -436,17 +455,11 @@ function generateSchedule(data){
     let taxSaving = (interest + reportResults.riskInsuranceValue + data.regularCommission + depreciation)*INCOME_TAX
     
     if(totalGracePeriods.includes(i)){
-      console.log("WE HAVE A TOTAL")
-      console.log(i.toString())
-      console.log(totalGracePeriods)
       repayment = 0
       quota = 0
       finalValue = initialValue + interest
       gp = 'T'
     }else if(partialGracePeriods.includes(i)){
-      console.log("WE HAVE A partial")
-      console.log(i.toString())
-      console.log(partialGracePeriods)
       repayment = 0
       quota = interest
       finalValue = initialValue
@@ -611,7 +624,7 @@ function onReset () {
             </form>
     </div>
 
-    <div v-if="showResults" class="font-dm-sans-bold text-xl">Resultados</div>
+    <div class="font-dm-sans-bold text-xl">Resultados</div>
         <q-separator />
             <div class="q-gutter-md">
                 <div class="grid grid-cols-2 gap-3">
