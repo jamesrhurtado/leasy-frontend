@@ -9,12 +9,12 @@ import Footer from '@/components/footer.component.vue'
 </script>
 <template> 
     <AuthHeader />
-    <div class="w-96 h-auto m-auto my-20 font-dm-sans-regular texto" >
-        <h1> Calcule el Leasing</h1>
+    <div class="w-96 h-auto m-auto pt-4 mt-24 mx-20 font-dm-sans-regular texto" >
+        <div class="text-8xl">Bienvenido a Leasy</div>
         <br>
-        <text-body1>Le ayudamos a calcular el Leasing financiero a través del método Alemán.</text-body1>
+        <text-body1 class = "text-xl">Le ayudamos a calcular el Leasing financiero a través del método Alemán.</text-body1>
         <br>
-        <div class="puntos">
+        <div class="puntos m-4">
             <q-btn dense round flat icon="check">
             Al instante
         </q-btn> 
@@ -22,13 +22,13 @@ import Footer from '@/components/footer.component.vue'
             Incluye diversas monedas
         </q-btn> 
         </div>   
-        <q-btn dense round flat icon="check">
+        <q-btn dense round flat icon="check" class="m-4">
         Resultados precisos
         </q-btn>    <q-btn dense round flat icon="check">
         100% digital
         </q-btn>
         <br>
-        <q-btn color="secondary" label="" type="submit" >
+        <q-btn color="secondary" label="" type="submit" class="mx-4">
             <RouterLink to="/sign-up" class=" font-dm-sans-bold text-b ">
                 Registrarse
             </RouterLink>
@@ -41,26 +41,25 @@ import Footer from '@/components/footer.component.vue'
     <div class="w-80 h-auto m-auto my-20 container-img" >
         <img alt="logo finanzas" src="@/assets/logof.png"/>
     </div>
-    <Footer />
+    <Footer/>
 </template>
 
 <style>
 .container-img{
-    float: right;
     margin-bottom: 50px;
-    
 }
+
 .text-b{
     color:white
 }
 .text-c{
     color:darkcyan
 }
+
 .texto{
-    float: left;
-    margin-right: 100px;
-    
+    margin-right: 100px; 
 }
+
 .puntos{
     margin-right: px;
 }

@@ -15,7 +15,7 @@ import Footer from '@/components/footer.component.vue'
             <br>
             <h3>¿Que es un leasing financiero?</h3>
             <br>
-            <text-body1>
+            <text-body1 class="text-lg">
                 Un leasing financiero es un contrato comercial, en la cual un arrendador
                 arrienda a un arriendatario bienes por un tiempo determinado a cambio de 
                 una contra prestación económica. Además, este puede optar por la compra del bien,
@@ -23,12 +23,12 @@ import Footer from '@/components/footer.component.vue'
             </text-body1>
             <br>
             <br>
-            <div class="elementos">
+            <div class="elementos text-lg">
                 <p>Elementos de un leasing:</p>
             </div>
             <div class="puntos">
-            <q-btn dense round flat icon="check">
-                Arriendatario
+            <q-btn dense round flat icon="check" >
+                Arrendatario
             </q-btn>
             <br>
             <q-btn dense round flat icon="check">
@@ -51,7 +51,7 @@ import Footer from '@/components/footer.component.vue'
             <br>
             <h4>¿Cómo funciona el leasing?</h4>
             <br>
-            <text-body2>
+            <text-body2  class="text-lg">
                 El leasing financiero es realizado por sociedades especializadas.
                 La entidad o empresa financiera, adquiere el bien que ha de ser arrendado, retiene su propiedad 
                 y facilita su uso y goce. Además, es un contrato bilateral y típico, regido por las leyes que 
@@ -59,7 +59,7 @@ import Footer from '@/components/footer.component.vue'
                 <br>
             </text-body2>
             <br>
-            <h4>Características del leasing financiero</h4>
+            <h4 class="mb-8">Características del leasing financiero</h4>
             <text-body2>
             <q-btn dense round flat icon="check">
                 Es flexible, es decir cuenta con cuotas fijas o variables.
@@ -91,29 +91,29 @@ import Footer from '@/components/footer.component.vue'
             <br>
             </text-body2>
             <br>
-            <h4>Marcol legal</h4>
+            <h4 >Marco legal</h4>
             <br>
-            <text-body3>
+            <text-body3 class="text-lg">
                 Se puede realizar un uso seguro del leasing  porque esta protegido por:
                 <br>
-                Decreto legislativo Nº299
+                <div class="font-semibold">Decreto legislativo Nº299</div>
                 <br>
                 Referido a las normas aplicables para la ejecución y contrataciónde operaciones de Leasing o 
                 Arrendamiento financiero.
                 El Decreto Legislativo Nº915, es una modificatoria al Decreto Legislativo N°299, y que precisa 
-                los alcances del artículo18°,modificado por la ley N° 27394.
+                los alcances del artículo18°, modificado por la ley N° 27394.
             <br>
             </text-body3>
             <br>
-            <h4>Método Alemán</h4>
-            <text-body4>
+            <h4 class="mb-8">Método Alemán</h4>
+            <text-body4 class="text-lg mb-8">
                 En esta plataforma hacemos uso del método Alemán, el cual establece un valor de cuotas variables
                 y siendo decreciente cada mes, hasta su cancelación total de la deuda.
             </text-body4>
             <br>
-            <q-btn color="secondary" label="" type="submit" >
+            <q-btn color="secondary" label="" type="submit" class="mt-8">
                 <RouterLink to="/" class=" font-dm-sans-bold text-b ">
-                    Inicio
+                    Registrarse para acceder a la calculadora
                 </RouterLink>
             </q-btn>
         </div>
@@ -125,9 +125,7 @@ import Footer from '@/components/footer.component.vue'
     text-size-adjust: 20px;
 }
 .texto{
-    float: left;
     margin-right: 100px;
-    
 }
 .puntos{
     margin-right: px;
