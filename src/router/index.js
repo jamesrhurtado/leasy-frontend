@@ -6,8 +6,17 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: () => import('@/accounts/pages/sign-in.component.vue')
+      redirect: 'home'
+    },
+    {
+      path: '/home',
+      name: 'Home',
+      component: () => import('@/home/pages/home.component.vue')
+    },
+    {
+      path: '/information',
+      name: 'Information',
+      component: () => import('@/home/pages/information.component.vue')
     },
     {
       path: '/sign-in',
@@ -32,8 +41,18 @@ const router = createRouter({
     {
       path: '/calculator',
       name: 'Calculator',
-      component: () => import('@/calculator/pages/calculator.component.vue')
-    }
+      component: () => import('@/reports/pages/calculator.component.vue')
+    },
+    {
+      path: '/reports',
+      name: 'Reports',
+      component: () => import('@/reports/pages/reports.component.vue')
+    },
+    {
+      path: '/header',
+      name: 'Header',
+      component: () => import('@/components/header.component.vue')
+    },
   ]
 })
 

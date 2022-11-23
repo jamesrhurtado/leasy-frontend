@@ -1,10 +1,12 @@
 <script setup>
 import { useQuasar } from 'quasar'
 import { ref, reactive } from 'vue'
-import {UsersService} from '../services/users.service'
+import {AuthService} from '../services/auth.service'
 import { useRouter, RouterLink } from "vue-router";
+import AuthHeader from '@/components/auth-header.component.vue'
+import Footer from '@/components/footer.component.vue'
 
-const userService = new UsersService()
+const authService = new AuthService()
 const router = useRouter();
 const $q = useQuasar()
 
@@ -33,10 +35,17 @@ const confirmPasswordRules = [val => (val && val.length > 0) || 'Este campo es o
 const accept = ref(false)
 
 const handleRegister = async () => {
-    const success = validateData()
-    if(success){
-        await userService.create(newUser)
+    const validData = validateData()
+    if(authService.register(newUser) && validData){
         router.push("/sign-in");
+    }else{
+        $q.notify({
+            color: 'negative',
+            message: 'No se pudo registrar. Verifique sus datos.',
+            actions: [
+                { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+            ]
+        })
     }
 }
 
@@ -77,7 +86,8 @@ const validateData = () => {
 </script>
 
 <template>
-    <div class="grid shadow-md w-96 m-auto my-6 font-dm-sans-regular">
+    <AuthHeader />
+    <div class="grid shadow-md w-96 m-auto my-6 font-dm-sans-regular pt-4 mt-24">
         <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-2xl md:text-3xl">
             Registrarse
         </div>
@@ -152,6 +162,7 @@ const validateData = () => {
         </RouterLink>
         </div>
     </div>
+    <Footer />
 </template>
 <style>
 
