@@ -15,14 +15,16 @@ const user = reactive({
     password: ""
 })
 
+//validation settings
 const email = ref(null)
 const emailRef = ref(null)
 
 const password = ref(null)
 const passwordRef = ref(null)
 const isPwd = ref(true)
-const emailRules = [val => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(val)) || 'Por favor, ingrese un correo valido']
 
+//validation rules
+const emailRules = [val => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(val)) || 'Por favor, ingrese un correo valido']
 const passwordRules = [val => (val && val.length > 0) || 'Este campo es obligatorio']
 
 const validateData = () => {
@@ -42,10 +44,10 @@ const validateData = () => {
     }
     return valid
 }
+
 const handleSubmit = async () => {
     const validData = validateData()
     const status = await authService.login(user)
-    console.log(status)
     if(status && validData){
         $q.notify({
             icon: 'done',

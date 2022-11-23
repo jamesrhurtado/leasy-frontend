@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '../stores/auth.store';
 
 
 const router = createRouter({
@@ -31,22 +32,54 @@ const router = createRouter({
     {
       path: '/my-profile',
       name: 'Profile',
-      component: () => import('@/accounts/pages/user-profile.component.vue')
+      component: () => import('@/accounts/pages/user-profile.component.vue'),
+      beforeEnter: (to, from, next) =>{
+        const UserStore = useAuthStore()
+        const auth = UserStore.user
+        console.log(auth)
+        if (!auth){
+          next({ name: 'Sign In' })
+        }else next()
+      }
     },
     {
       path: '/settings',
       name: 'Settings',
-      component: () => import('@/accounts/pages/user-settings.component.vue')
+      component: () => import('@/accounts/pages/user-settings.component.vue'),
+      beforeEnter: (to, from, next) =>{
+        const UserStore = useAuthStore()
+        const auth = UserStore.user
+        console.log(auth)
+        if (!auth){
+          next({ name: 'Sign In' })
+        }else next()
+      }
     },
     {
       path: '/calculator',
       name: 'Calculator',
-      component: () => import('@/reports/pages/calculator.component.vue')
+      component: () => import('@/reports/pages/calculator.component.vue'),
+      beforeEnter: (to, from, next) =>{
+        const UserStore = useAuthStore()
+        const auth = UserStore.user
+        console.log(auth)
+        if (!auth){
+          next({ name: 'Sign In' })
+        }else next()
+      }
     },
     {
       path: '/reports',
       name: 'Reports',
-      component: () => import('@/reports/pages/reports.component.vue')
+      component: () => import('@/reports/pages/reports.component.vue'),
+      beforeEnter: (to, from, next) =>{
+        const UserStore = useAuthStore()
+        const auth = UserStore.user
+        console.log(auth)
+        if (!auth){
+          next({ name: 'Sign In' })
+        }else next()
+      }
     },
     {
       path: '/header',
@@ -55,5 +88,6 @@ const router = createRouter({
     },
   ]
 })
+
 
 export default router
