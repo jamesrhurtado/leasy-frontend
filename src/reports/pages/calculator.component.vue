@@ -150,13 +150,15 @@ const periodicals = [
   {label: 'Anual', value: 'yearly'}
 ]
 
-
+//Settings for Validation
 const moneyRef = ref(null)
 const percentageRef = ref(null)
 const frequencyRef = ref(null)
 const timeRef = ref(null)
 const rateRef = ref(null)
 const gracePeriodsRef = ref(null)
+
+//Rules for Validation
 const moneyRules = [
   val => (val !== null && val !== '') || 'Este dato es requerido. Si es opcional, ingrese 0.',
   val => (val >= 0) || 'El valor ingresado no es válido.'  
@@ -185,7 +187,6 @@ const gracePeriodsRules = [
   val => (val !== null && val !== '') || 'Este dato es requerido. Ingreselo como x, y, z. Si no lo considera, ingrese 0'
 ]
 
-//ADD function to validate fields
 function validateInputFields(){
   let valid = false
 //cannot be grace period in last period
@@ -513,7 +514,7 @@ function generateSchedule(data){
       }
     } while(Math.abs(NPV) > 0.000001);
     return IRR * 100;
-    }
+  }
 
   console.log(roundPercentage(calculateIRR(grossFlowCollection)))
 let tceaGross = roundPercentage((Math.pow(1 + calculateIRR(grossFlowCollection), DAYS_PER_YEAR/getDaysPerFrequency(data.paymentFrequency))-1) * 100)
@@ -706,6 +707,19 @@ function onReset () {
                             <div class="self-center full-width no-outline" tabindex="0">{{reportResults.netFlowNpv }}</div>
                           </template>
                         </q-field>
+
+                        <q-field class="p-2" outlined label="TIR Flujo Bruto" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.irrGrossFlow }}</div>
+                          </template>
+                        </q-field>
+
+                        <q-field class="p-2" outlined label="TIR Flujo Neto" stack-label readonly>
+                          <template v-slot:control>
+                            <div class="self-center full-width no-outline" tabindex="0">{{reportResults.irrNetFlow }}</div>
+                          </template>
+                        </q-field>
+
                     </div>
                 </div>
               </div>
