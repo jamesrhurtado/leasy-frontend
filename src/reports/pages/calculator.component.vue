@@ -116,7 +116,9 @@ const reportResults = reactive({
   grossFlowEar : null,
   netFlowEar : null,
   grossFlowNpv : null,
-  netFlowNpv : null
+  netFlowNpv : null,
+  irrGrossFlow: null,
+  irrNetFlow: null
 })
 
 const gracePeriods = reactive({
@@ -255,11 +257,17 @@ const handleSubmit = async () => {
   const validData = validateInputFields()
   if(validData){
     const storableData = loadData()
+    console.log("saving")
     await reportsService.create(storableData)
+    console.log("leasing r")
     calculateLeasingResults(storableData)
+    console.log("total...")
     calculateTotalResults(storableData)
+    console.log("recurring")
     calculateRecurringCosts(storableData)
+    console.log("profitab")
     calculateProfitabilityIndicators(storableData)
+    console.log("schedulee...")
     generateSchedule(storableData)
   }else{
     $q.notify({
@@ -493,13 +501,13 @@ function generateSchedule(data){
     })
     initialValue = finalValue
   }
-  
-  let IRR = 0
-  let NPV = 0
+
 
   function calculateIRR(flows) {
-    let min = 0.0;
-    let max = 1.0;
+    let IRR = 0
+    let NPV = 0
+    let min = -1.0;
+    let max = 11.0;
     do {
       IRR = (min + max) / 2;
       NPV = 0;
@@ -512,13 +520,22 @@ function generateSchedule(data){
       else {
         max = IRR;
       }
-    } while(Math.abs(NPV) > 0.000001);
+      //stays in 15.69 forever
+    } while(Math.abs(NPV) > 0.000000001);
     return IRR * 100;
   }
 
-  console.log(roundPercentage(calculateIRR(grossFlowCollection)))
-let tceaGross = roundPercentage((Math.pow(1 + calculateIRR(grossFlowCollection), DAYS_PER_YEAR/getDaysPerFrequency(data.paymentFrequency))-1) * 100)
-console.log(tceaGross)
+  console.log("before irr g f")
+  reportResults.irrGrossFlow = roundPercentage(calculateIRR(grossFlowCollection))
+  console.log("before irr n f")
+  reportResults.irrNetFlow = roundPercentage(calculateIRR(netFlowCollection))
+
+  console.log("before n f ear")
+  reportResults.netFlowEar = roundPercentage((Math.pow(1 + (reportResults.irrNetFlow)/100, DAYS_PER_YEAR/getDaysPerFrequency(data.paymentFrequency))-1)*100)
+
+  console.log("before g f ear")
+  reportResults.grossFlowEar = roundPercentage((Math.pow(1 + (reportResults.irrGrossFlow)/100, DAYS_PER_YEAR/getDaysPerFrequency(data.paymentFrequency))-1)*100)
+  console.log("the othres....")
   reportResults.totalInterest = roundDecimal(totalInterest)
   reportResults.totalRepayment = roundDecimal(totalRepayment)
   reportResults.totalRiskInsurance = roundDecimal(totalRiskInsurance)
@@ -684,13 +701,13 @@ function onReset () {
                     <div>
                         <div class="sub-heading-form font-dm-sans-bold p-2 my-2">Indicadores de rentabilidad</div>
 
-                        <q-field class="p-2" outlined label="TCEA Flujo Bruto" stack-label readonly>
+                        <q-field class="p-2" outlined label="TCEA Flujo Bruto" prefix="%" stack-label readonly>
                           <template v-slot:control>
                             <div class="self-center full-width no-outline" tabindex="0">{{reportResults.grossFlowEar }}</div>
                           </template>
                         </q-field>
 
-                        <q-field class="p-2" outlined label="TCEA Flujo Neto" stack-label readonly>
+                        <q-field class="p-2" outlined label="TCEA Flujo Neto" prefix="%" stack-label readonly>
                           <template v-slot:control>
                             <div class="self-center full-width no-outline" tabindex="0">{{reportResults.netFlowEar }}</div>
                           </template>
@@ -708,13 +725,13 @@ function onReset () {
                           </template>
                         </q-field>
 
-                        <q-field class="p-2" outlined label="TIR Flujo Bruto" stack-label readonly>
+                        <q-field class="p-2" outlined label="TIR Flujo Bruto" prefix="%" stack-label readonly>
                           <template v-slot:control>
                             <div class="self-center full-width no-outline" tabindex="0">{{reportResults.irrGrossFlow }}</div>
                           </template>
                         </q-field>
 
-                        <q-field class="p-2" outlined label="TIR Flujo Neto" stack-label readonly>
+                        <q-field class="p-2" outlined label="TIR Flujo Neto" prefix="%" stack-label readonly>
                           <template v-slot:control>
                             <div class="self-center full-width no-outline" tabindex="0">{{reportResults.irrNetFlow }}</div>
                           </template>
