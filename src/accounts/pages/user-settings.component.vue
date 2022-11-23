@@ -1,6 +1,8 @@
 <script setup>
 import { useQuasar } from 'quasar'
 import { ref, computed } from 'vue'
+import { onBeforeMount, onBeforeUnmount } from 'vue'
+import { useRouter } from "vue-router";
 import {SettingsService} from '@/accounts/services/settings.service.js'
 import { useSettingsStore } from '../../stores/settings.store.js';
 import { useAuthStore } from '../../stores/auth.store.js';
@@ -14,6 +16,7 @@ let settings  = SettingsStore.settings
 
 const UserStore = useAuthStore()
 const auth = UserStore.user
+
 const $q = useQuasar()
 const currency = ref("")
 const settingsService = new SettingsService()

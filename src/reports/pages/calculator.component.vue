@@ -4,7 +4,8 @@ import { ref, reactive, nextTick } from 'vue'
 import {ReportsService} from '@/reports/services/reports.service.js'
 import { useSettingsStore } from '../../stores/settings.store.js';
 import { useAuthStore } from '../../stores/auth.store.js';
-import { onBeforeUnmount } from 'vue'
+import { onBeforeMount, onBeforeUnmount } from 'vue'
+import { useRouter } from "vue-router";
 import Header from '@/components/header.component.vue'
 import Footer from '@/components/footer.component.vue'
 
@@ -14,6 +15,9 @@ const settings  = SettingsStore.settings;
 
 const UserStore = useAuthStore()
 const auth = UserStore.user
+
+const router = useRouter();
+
 
 //Services
 const reportsService = new ReportsService()
