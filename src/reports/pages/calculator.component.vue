@@ -462,7 +462,7 @@ function generateSchedule(data) {
   //COLLECTIONS FOR TIR, TCEA
   let grossFlowCollection = [(-reportResults.leasingValue)]
   let netFlowCollection = [(-reportResults.leasingValue)]
-
+  rows.length = 0
   for (let i = 1; i <= reportResults.totalQuotas; i++) {
     interest = (initialValue * (reportResults.periodEffectiveRate / 100))
     totalInterest = totalInterest + interest
@@ -575,10 +575,30 @@ function generateSchedule(data) {
 
 //cleans the fields
 function onReset() {
-  name.value = null
-  age.value = null
-  nameRef.value.resetValidation()
-  ageRef.value.resetValidation()
+  currentReport.assetPrice =  "",
+  currentReport.leasingYears = "",
+  currentReport.paymentFrequency = "",
+  currentReport.rateType = "",
+  currentReport.rateFrequency = "",
+  currentReport.capitalization = "",
+  currentReport.rateValue = "",
+  currentReport.buyback = "",
+  currentReport.notaryFees = "",
+  currentReport.registryFees = "",
+  currentReport.valuation = "",
+  currentReport.studyCommission = "",
+  currentReport.activationCommission = "",
+  currentReport.regularCommission = "",
+  currentReport.riskInsurance = "",
+  currentReport.rateKs = "",
+  currentReport.rateWacc = ""
+
+  moneyRef.value.resetValidation()
+  percentageRef.value.resetValidation()
+  frequencyRef.value.resetValidation()
+  timeRef.value.resetValidation()
+  rateRef.value.resetValidation()
+  gracePeriodsRef.value.resetValidation()
 }
 
 </script>
@@ -586,7 +606,7 @@ function onReset() {
 <template>
   <Header />
   <div class="w-auto m-auto my-6 font-dm-sans-regular">
-    <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-4xl md:text-5xl pt-28">Leasing
+    <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-4xl md:text-5xl pt-28">Calculadora
     </div>
     <div class="font-dm-sans-bold text-xl">Ingrese los datos</div>
     <q-separator />
@@ -646,7 +666,7 @@ function onReset() {
           <q-btn color="black" label="Calcular" type="submit" />
         </div>
         <div>
-          <q-btn color="red" label="Limpiar" />
+          <q-btn color="red" label="Limpiar" @click="onReset()"/>
         </div>
       </div>
     </form>
