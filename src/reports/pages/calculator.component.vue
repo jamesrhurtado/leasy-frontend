@@ -192,8 +192,17 @@ const gracePeriodsRules = [
 ]
 
 function validateGracePeriods() {
+ // un mismo periodo no puede ser el mismo
+
   totalGracePeriods = gracePeriods.total.split(",").map(Number)
   partialGracePeriods = gracePeriods.partial.split(",").map(Number)
+
+  let similarGracePeriods = totalGracePeriods.some( gracePeriod => partialGracePeriods.includes(gracePeriod));
+  console.log(similarGracePeriods)
+  if(similarGracePeriods){
+    return false;
+  }
+
   //cannot exist grace period in last period
   let lastPeriod = parseInt(currentReport.leasingYears) * DAYS_PER_YEAR / getDaysPerFrequency(currentReport.paymentFrequency.value)
 
@@ -264,7 +273,7 @@ function validateInputFields() {
   } else if (!validateGracePeriods()) {
     $q.notify({
       color: 'negative',
-      message: 'Un periodo de gracia de tipo T o P no puede ser dado en el ultimo periodo.',
+      message: 'No puede existir un periodo de gracia en el ultimo periodo, o estos no pueden repetirse.',
       actions: [
         { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
       ]
