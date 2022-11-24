@@ -192,11 +192,15 @@ const gracePeriodsRules = [
 ]
 
 function validateGracePeriods() {
- // un mismo periodo no puede ser el mismo
 
   totalGracePeriods = gracePeriods.total.split(",").map(Number)
   partialGracePeriods = gracePeriods.partial.split(",").map(Number)
+  //if both 0, then test cases passed
+  if(totalGracePeriods.includes(0) && partialGracePeriods.includes(0)){
+    return true;
+  }
 
+  //grace periods different than 0 and repeated are not allowed
   let similarGracePeriods = totalGracePeriods.some( gracePeriod => partialGracePeriods.includes(gracePeriod));
   console.log(similarGracePeriods)
   if(similarGracePeriods){

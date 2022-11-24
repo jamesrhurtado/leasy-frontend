@@ -121,7 +121,8 @@ import Footer from '@/components/footer.component.vue'
             <br>
             <text-body4 class="text-lg mb-8">
                 Efinance Book fue desarrollado por el destacado docente 
-                <a class="font-semibold underline underline-offset-4" href="https://www.linkedin.com/in/martin-senmache-36115911/" target="_blank">José Manuel Martín Senmache Sarmiento</a>
+                <a class="font-semibold underline underline-offset-4" href="https://www.linkedin.com/in/martin-senmache-36115911/" target="_blank">José Manuel Martín Senmache Sarmiento</a>,
+                a quien agradecemos por los conocimientos brindados durante el semestre académico 2022-2 en UPC.
             </text-body4>
             <br>
             <q-btn color="secondary" label="" type="submit" class="mt-8">
