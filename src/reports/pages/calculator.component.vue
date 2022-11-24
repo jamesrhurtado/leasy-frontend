@@ -575,10 +575,30 @@ function generateSchedule(data) {
 
 //cleans the fields
 function onReset() {
-  name.value = null
-  age.value = null
-  nameRef.value.resetValidation()
-  ageRef.value.resetValidation()
+  currentReport.assetPrice =  "",
+  currentReport.leasingYears = "",
+  currentReport.paymentFrequency = "",
+  currentReport.rateType = "",
+  currentReport.rateFrequency = "",
+  currentReport.capitalization = "",
+  currentReport.rateValue = "",
+  currentReport.buyback = "",
+  currentReport.notaryFees = "",
+  currentReport.registryFees = "",
+  currentReport.valuation = "",
+  currentReport.studyCommission = "",
+  currentReport.activationCommission = "",
+  currentReport.regularCommission = "",
+  currentReport.riskInsurance = "",
+  currentReport.rateKs = "",
+  currentReport.rateWacc = ""
+
+  moneyRef.value.resetValidation()
+  percentageRef.value.resetValidation()
+  frequencyRef.value.resetValidation()
+  timeRef.value.resetValidation()
+  rateRef.value.resetValidation()
+  gracePeriodsRef.value.resetValidation()
 }
 
 </script>
@@ -646,7 +666,7 @@ function onReset() {
           <q-btn color="black" label="Calcular" type="submit" />
         </div>
         <div>
-          <q-btn color="red" label="Limpiar" />
+          <q-btn color="red" label="Limpiar" @click="onReset()"/>
         </div>
       </div>
     </form>
