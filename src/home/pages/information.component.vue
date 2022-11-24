@@ -96,7 +96,7 @@ import Footer from '@/components/footer.component.vue'
             <text-body3 class="text-lg">
                 Se puede realizar un uso seguro del leasing  porque esta protegido por:
                 <br>
-                <div class="font-semibold">Decreto legislativo Nº299</div>
+                <a class="font-semibold underline underline-offset-4" href="http://galvezconsultores.com/pdf-normas/LEASING%20(D.Leg.299).pdf">Decreto legislativo Nº299</a>
                 <br>
                 Referido a las normas aplicables para la ejecución y contrataciónde operaciones de Leasing o 
                 Arrendamiento financiero.
