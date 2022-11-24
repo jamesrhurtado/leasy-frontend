@@ -71,7 +71,7 @@ export default {
             </div>
         </div>
         <div v-for="report, index in reports" v-bind:key="report.id">
-            <div> Reporte numero: {{ index + 1 }} </div>
+            <div class="my-8 text-2xl font-semibold"> Reporte numero: {{ index + 1 }} </div>
             <div class="q-gutter-md bg-slate-100 rounded-2xl">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -190,8 +190,8 @@ export default {
                             </template>
                         </q-field>
                     </div>
-                    <div>
-                        <q-btn color="black" label="Ver Detalles" />
+                    <div class="m-4">
+                        <q-btn color="red" label="Eliminar reporte" />
                     </div>
                 </div>
             </div>
