@@ -96,7 +96,7 @@ import Footer from '@/components/footer.component.vue'
             <text-body3 class="text-lg">
                 Se puede realizar un uso seguro del leasing  porque esta protegido por:
                 <br>
-                <a class="font-semibold underline underline-offset-4" href="http://galvezconsultores.com/pdf-normas/LEASING%20(D.Leg.299).pdf">Decreto legislativo Nº299</a>
+                <a class="font-semibold underline underline-offset-4" href="http://galvezconsultores.com/pdf-normas/LEASING%20(D.Leg.299).pdf" target="_blank">Decreto legislativo Nº299</a>
                 <br>
                 Referido a las normas aplicables para la ejecución y contrataciónde operaciones de Leasing o 
                 Arrendamiento financiero.
@@ -109,6 +109,19 @@ import Footer from '@/components/footer.component.vue'
             <text-body4 class="text-lg mb-8">
                 En esta plataforma hacemos uso del método Alemán, el cual establece un valor de cuotas variables
                 y siendo decreciente cada mes, hasta su cancelación total de la deuda.
+            </text-body4>
+            <br>
+            <h4 class="mb-8 mt-8">Informacion adicional</h4>
+            <text-body4 class="text-lg mb-8">
+                En caso se deseen profundizar en temas de finanzas e ingeniería económica, es recomendable acudir
+                a <a class="font-semibold underline underline-offset-4" href="http://www.e-financebook.com/" target="_blank">E-finance Book</a>
+                , un recurso muy valuado y usado como base para el desarrollo de este proyecto.
+            </text-body4>
+            <br>
+            <br>
+            <text-body4 class="text-lg mb-8">
+                Efinance Book fue desarrollado por el destacado docente 
+                <a class="font-semibold underline underline-offset-4" href="https://www.linkedin.com/in/martin-senmache-36115911/" target="_blank">José Manuel Martín Senmache Sarmiento</a>
             </text-body4>
             <br>
             <q-btn color="secondary" label="" type="submit" class="mt-8">
