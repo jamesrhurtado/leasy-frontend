@@ -39,9 +39,15 @@ export default {
             this.showLoading()
             this.reportsService.getAllByUserId(this.auth.user.id).then(response => { this.reports = response.data })
         },
-        removeReport: function (index){
+        removeReport: function (index) {
             this.reportsService = new ReportsService()
-            this.reportsService.delete(index)  
+            this.reportsService.delete(index)
+            this.$q.notify({
+                icon: 'done',
+                color: 'positive',
+                message: 'Se ha eliminado el reporte seleccionado. Vuelva a ingresar para ver los cambios.',
+                actions: [{ label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }]
+            })
         },
         showLoading: function () {
             this.$q.loading.show({
