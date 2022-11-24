@@ -462,7 +462,7 @@ function generateSchedule(data) {
   //COLLECTIONS FOR TIR, TCEA
   let grossFlowCollection = [(-reportResults.leasingValue)]
   let netFlowCollection = [(-reportResults.leasingValue)]
-
+  rows.length = 0
   for (let i = 1; i <= reportResults.totalQuotas; i++) {
     interest = (initialValue * (reportResults.periodEffectiveRate / 100))
     totalInterest = totalInterest + interest
@@ -586,7 +586,7 @@ function onReset() {
 <template>
   <Header />
   <div class="w-auto m-auto my-6 font-dm-sans-regular">
-    <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-4xl md:text-5xl pt-28">Leasing
+    <div class="heading heading-color my-3 font-dm-sans-bold text-center self-center text-4xl md:text-5xl pt-28">Calculadora
     </div>
     <div class="font-dm-sans-bold text-xl">Ingrese los datos</div>
     <q-separator />
